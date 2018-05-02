@@ -41,7 +41,6 @@ class RegexReferenceContributor: PsiReferenceContributor() {
             // todo pschaaf 04/120/18 16:04: the remaining plugins have not been verified for some time
                "JavaScript"           -> register("com.intellij.lang.javascript.psi.JSLiteralExpression")
                "com.jetbrains.php"    -> register("com.jetbrains.php.lang.psi.elements.StringLiteralExpression")
-               else -> {}
             }
          }
       }

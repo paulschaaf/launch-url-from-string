@@ -33,11 +33,9 @@ class PsiStringRegexToHyperlink<T: PsiElement>(element: T): PsiPolyVariantRefere
       else
          issueNavigationConfiguration.links.stream()
                .map {link-> link.issuePattern.toRegex() to link.linkRegexp}
-               //.peek {println("Checking regex to Link === " + it)}
-               .filter {pair-> pair.first.containsMatchIn(stringValue!!)}
-               //.peek {println("Matched regex to Link === " + it)}
-               .map {stringValue!!.replace(it.first, it.second)}
-               .map {url-> PsiElementResolveResult(RegexNavigablePsiElement(element, url!!))}
+               .filter {(issuePattern, _)-> issuePattern.containsMatchIn(stringValue!!)}
+               .map {(issuePattern, urlPattern)-> stringValue!!.replace(issuePattern, urlPattern)}
+               .map {urlString-> element.regexResolveResult(urlString!!)}
                .limit(1)  // look no further than the first match
                .toArray {length-> arrayOfNulls<ResolveResult>(length)}
    }
@@ -47,16 +45,20 @@ class PsiStringRegexToHyperlink<T: PsiElement>(element: T): PsiPolyVariantRefere
    override fun isReferenceTo(element: PsiElement) = false
 }
 
-val PsiElement.stringValue: String?
+fun PsiElement.regexResolveResult(url: String): PsiElementResolveResult = PsiElementResolveResult(
+      RegexNavigablePsiElement(this, url))
+
+val PsiElement.stringValue
    get() = when (this) {
       is PsiLiteral        -> value as? String
       is XmlAttributeValue -> value
       is XmlTag            -> value.trimmedText
       else                 -> text
-   }?.unquote()
+   }?.unquoted
 
-fun String.unquote() = when (first()) {
-   '"'  -> removeSurrounding("\"")
-   '\'' -> removeSurrounding("'")
-   else -> this
-}
+val String.unquoted
+   get() = when (first()) {
+      '"'  -> removeSurrounding("\"")
+      '\'' -> removeSurrounding("'")
+      else -> this
+   }
