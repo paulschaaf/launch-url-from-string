@@ -17,6 +17,7 @@
 package com.pgschaaf.launchurlfromstring
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.*
 import java.net.URI
 
@@ -29,9 +30,9 @@ class RegexNavigablePsiElement(private val element: PsiElement, private val url:
    override fun canNavigateToSource() = true
 
    // ---- From NavigationItem
-   override fun getName() = null
+   override fun getName(): String? = null
 
-   override fun getPresentation() = null
+   override fun getPresentation(): ItemPresentation? = null
 
    // ---- From PsiElement
    override fun getNavigationElement() = this

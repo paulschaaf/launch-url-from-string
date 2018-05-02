@@ -16,6 +16,7 @@
 
 package com.pgschaaf.launchurlfromstring
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vcs.IssueNavigationConfiguration
 import com.intellij.psi.*
@@ -23,38 +24,37 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
 
 class PsiStringRegexToHyperlink<T: PsiElement>(element: T): PsiPolyVariantReferenceBase<T>(element, true) {
-   val project = ProjectManager.getInstance().openProjects.first()
-   val issueNavigationConfiguration = IssueNavigationConfiguration.getInstance(project)
+   private val project: Project = ProjectManager.getInstance().openProjects.first()
+   private val issueNavigationConfiguration: IssueNavigationConfiguration =
+         IssueNavigationConfiguration.getInstance(project)
 
-   override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult?> {
-      val stringValue = element.stringValue
-      return if (stringValue.isNullOrEmpty())
-         arrayOfNulls(0)
-      else
-         issueNavigationConfiguration.links.stream()
-               .map {link-> link.issuePattern.toRegex() to link.linkRegexp}
-               .filter {(issuePattern, _)-> issuePattern.containsMatchIn(stringValue!!)}
-               .map {(issuePattern, urlPattern)-> stringValue!!.replace(issuePattern, urlPattern)}
-               .map {urlString-> element.regexResolveResult(urlString!!)}
-               .limit(1)  // look no further than the first match
-               .toArray {length-> arrayOfNulls<ResolveResult>(length)}
-   }
+   override fun multiResolve(incompleteCode: Boolean) = multiResolve(element.clickableString)
+
+   private fun multiResolve(stringValue: String): Array<ResolveResult?> =
+         if (stringValue.isEmpty())
+            arrayOfNulls(0)
+         else
+            issueNavigationConfiguration.links.stream()
+                  .map {link-> link.issuePattern.toRegex() to link.linkRegexp}
+                  .filter {(pattern, _)-> pattern.containsMatchIn(stringValue)}
+                  .map {(pattern, urlPattern)-> stringValue.replace(pattern, urlPattern)}
+                  .map {urlString-> RegexNavigablePsiElement(element, urlString)}
+                  .map {navElement-> PsiElementResolveResult(navElement)}
+                  .limit(1)  // look no further than the first match
+                  .toArray {length-> arrayOfNulls<ResolveResult>(length)}
 
    override fun getVariants() = arrayOfNulls<Any>(0)
 
    override fun isReferenceTo(element: PsiElement) = false
 }
 
-fun PsiElement.regexResolveResult(url: String): PsiElementResolveResult = PsiElementResolveResult(
-      RegexNavigablePsiElement(this, url))
-
-val PsiElement.stringValue
+val PsiElement.clickableString
    get() = when (this) {
-      is PsiLiteral        -> value as? String
-      is XmlAttributeValue -> value
+      is PsiLiteral        -> value as? String ?: ""
+      is XmlAttributeValue -> value ?: ""
       is XmlTag            -> value.trimmedText
       else                 -> text
-   }?.unquoted
+   }.unquoted
 
 val String.unquoted
    get() = when (first()) {

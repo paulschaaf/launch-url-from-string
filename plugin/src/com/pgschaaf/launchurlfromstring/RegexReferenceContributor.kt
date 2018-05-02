@@ -16,52 +16,63 @@
 
 package com.pgschaaf.launchurlfromstring
 
-import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
-import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.StandardPatterns
-import com.intellij.patterns.XmlPatterns
 import com.intellij.psi.*
 import com.intellij.util.ProcessingContext
+import com.intellij.util.containers.stream
+import java.util.stream.Stream
 
-class RegexReferenceContributor: PsiReferenceContributor() {
-   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-      registrar.register(XmlPatterns.xmlAttributeValue(), XmlPatterns.xmlTag())
-      registrar.register("com.intellij.psi.PsiLiteral")   // covers Java and Scala
+val CommonClasses = setOf("com.intellij.psi.PsiLiteral",   // covers Java & Scala
+                          "com.intellij.psi.xml.XmlTag",
+                          "com.intellij.psi.xml.XmlAttributeValue")
 
-      fun IdeaPluginDescriptor.register(className: String) = registrar.register(className, pluginClassLoader)
-      PluginManager.getPlugins().forEach {plugin->
-         with(plugin) {
-            when (pluginId.idString) {
-               "Dart"                 -> register("com.jetbrains.lang.dart.psi.DartStringLiteralExpression")
-               "Gosu"                 -> register("gw.gosu.ij.psi.GosuPsiLiteralExpression")
-               "org.jetbrains.kotlin" -> register("org.jetbrains.kotlin.psi.KtStringTemplateExpression")
-               "PythonCore"           -> register("com.jetbrains.python.psi.PyStringLiteralExpression")
-
-            // todo pschaaf 04/120/18 16:04: the remaining plugins have not been verified for some time
-               "JavaScript"           -> register("com.intellij.lang.javascript.psi.JSLiteralExpression")
-               "com.jetbrains.php"    -> register("com.jetbrains.php.lang.psi.elements.StringLiteralExpression")
-            }
-         }
-      }
+// Rather than making this a mapOf(...) I made it an object with a get operator because this makes the mappings far easier to read and manage.
+object PluginClasses {
+   operator fun get(key: String) = when (key) {
+      "Dart"                 -> "com.jetbrains.lang.dart.psi.DartStringLiteralExpression"
+      "Gosu"                 -> "gw.gosu.ij.psi.GosuPsiLiteralExpression"
+      "JavaScript"           -> "com.intellij.lang.javascript.psi.JSLiteralExpression"
+      "org.jetbrains.kotlin" -> "org.jetbrains.kotlin.psi.KtStringTemplateExpression"
+      "com.jetbrains.php"    -> "com.jetbrains.php.lang.psi.elements.StringLiteralExpression"
+      "PythonCore"           -> "com.jetbrains.python.psi.PyStringLiteralExpression"
+//      "org.jetbrains.plugins.ruby" -> "org.jetbrains.plugins.ruby.ruby.lang.psi.basicTypes.stringLiterals.RStringLiteral"
+//      "org.jetbrains.plugins.ruby" -> "org.jetbrains.plugins.ruby.ruby.lang.psi.expressions.RLiteral"
+      else                   -> null
    }
 }
 
-fun PsiReferenceRegistrar.register(className: String, classLoader: ClassLoader = javaClass.classLoader) =
+class RegexReferenceContributor: PsiReferenceContributor() {
+   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
+      val commonLoaders = CommonClasses.stream()
+            .map {it to javaClass.classLoader}
+
+      val pluginLoaders = PluginManager.getPlugins().stream()
+            .map {PluginClasses[it.pluginId.idString] to it.pluginClassLoader}
+            .filter {(className, _)-> className != null}  // remove empties (for plugins we don't handle)
+
+      Stream.concat(commonLoaders, pluginLoaders)
+            .map {(className, loader)-> loader.loadPsiElementClass(className)}
+            .filter {it != null}  // the plugin is here, but we failed to load the named class
+            .map {StandardPatterns.instanceOf(it)}
+            .forEach {registrar.registerReferenceProvider(it, RegexPsiReferenceProvider)}
+   }
+
+   private object RegexPsiReferenceProvider: PsiReferenceProvider() {
+      override fun getReferencesByElement(element: PsiElement, context: ProcessingContext) =
+            arrayOf(PsiStringRegexToHyperlink(element))
+   }
+
+   private fun ClassLoader.loadPsiElementClass(stringLiteralClassName: String?): Class<PsiElement>? {
       try {
-         @Suppress("UNCHECKED_CAST")
-         val clazz = Class.forName(className, true, classLoader) as Class<PsiElement>
-         register(StandardPatterns.instanceOf(clazz))
+         if (stringLiteralClassName != null) {
+            @Suppress("UNCHECKED_CAST")
+            return Class.forName(stringLiteralClassName, true, this) as Class<PsiElement>
+         }
       }
-      catch (e: ClassNotFoundException) {
-         // todo pschaaf 04/120/18 15:04: log the errror
+      catch (e: ClassNotFoundException) { // todo pschaaf 04/120/18 15:04: log the error
          // if we can't find the plugin (e.g. because it isn't installed) then skip it
       }
-
-fun PsiReferenceRegistrar.register(vararg elementPatterns: ElementPattern<out PsiElement>) =
-      elementPatterns.forEach {it-> registerReferenceProvider(it, RegexPsiReferenceProvider)}
-
-object RegexPsiReferenceProvider: PsiReferenceProvider() {
-   override fun getReferencesByElement(element: PsiElement, context: ProcessingContext) =
-         arrayOf(PsiStringRegexToHyperlink(element))
+      return null
+   }
 }
