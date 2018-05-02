@@ -59,7 +59,7 @@ fun PsiReferenceRegistrar.register(className: String, classLoader: ClassLoader =
       }
 
 fun PsiReferenceRegistrar.register(vararg elementPatterns: ElementPattern<out PsiElement>) =
-      elementPatterns.forEach {elementPattern-> registerReferenceProvider(elementPattern, RegexPsiReferenceProvider)}
+      elementPatterns.forEach {it-> registerReferenceProvider(it, RegexPsiReferenceProvider)}
 
 object RegexPsiReferenceProvider: PsiReferenceProvider() {
    override fun getReferencesByElement(element: PsiElement, context: ProcessingContext) =

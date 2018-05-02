@@ -17,8 +17,8 @@
 <idea-plugin>
     <id>launch-url-from-string</id>
     <name>Launch URL from String</name>
-    <version>0.1</version>
-    <vendor email="paul.schaaf+intellij@gmail.com" url="https://github.com/paulschaaf/idea-launch-url-from-string">
+    <version>1.0b</version>
+    <vendor email="paul.schaaf+intellij@gmail.com" url="https://github.com/paulschaaf/launch-url-from-string">
         Paul Schaaf
     </vendor>
 
@@ -31,7 +31,7 @@
 
     <change-notes><![CDATA[
     <ul>
-      <li>0.1 Initial release
+      <li>1.0 Initial release
      </ul>]]></change-notes>
 
     <idea-version since-build="120.0"/>
