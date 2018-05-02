@@ -47,15 +47,16 @@ class RegexReferenceContributor: PsiReferenceContributor() {
    }
 }
 
-fun PsiReferenceRegistrar.register(className: String, classLoader: ClassLoader = javaClass.classLoader) = try {
-   @Suppress("UNCHECKED_CAST")
-   val clazz = Class.forName(className, true, classLoader) as Class<PsiElement>
-   register(StandardPatterns.instanceOf(clazz))
-}
-catch (e: ClassNotFoundException) {
-   // todo pschaaf 04/120/18 15:04: log the errror
-   // if we can't find the plugin (e.g. because it isn't installed) then skip it
-}
+fun PsiReferenceRegistrar.register(className: String, classLoader: ClassLoader = javaClass.classLoader) =
+      try {
+         @Suppress("UNCHECKED_CAST")
+         val clazz = Class.forName(className, true, classLoader) as Class<PsiElement>
+         register(StandardPatterns.instanceOf(clazz))
+      }
+      catch (e: ClassNotFoundException) {
+         // todo pschaaf 04/120/18 15:04: log the errror
+         // if we can't find the plugin (e.g. because it isn't installed) then skip it
+      }
 
 fun PsiReferenceRegistrar.register(vararg elementPatterns: ElementPattern<out PsiElement>) =
       elementPatterns.forEach {elementPattern-> registerReferenceProvider(elementPattern, RegexPsiReferenceProvider)}
