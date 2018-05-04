@@ -16,7 +16,6 @@
 
 package com.pgschaaf.launchurlfromstring
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vcs.IssueNavigationConfiguration
 import com.intellij.psi.*
@@ -24,9 +23,11 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
 
 class PsiStringRegexToHyperlink<T: PsiElement>(element: T): PsiPolyVariantReferenceBase<T>(element, true) {
-   private val project: Project = ProjectManager.getInstance().openProjects.first()
-   private val issueNavigationConfiguration: IssueNavigationConfiguration =
-         IssueNavigationConfiguration.getInstance(project)
+   private val project
+      get() = ProjectManager.getInstance().openProjects.first()
+
+   private val issueNavigationConfiguration
+      get() = IssueNavigationConfiguration.getInstance(project)
 
    override fun multiResolve(incompleteCode: Boolean) = multiResolve(element.clickableString)
 

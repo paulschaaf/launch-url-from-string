@@ -27,7 +27,8 @@ val CommonClasses = setOf("com.intellij.psi.PsiLiteral",   // covers Java & Scal
                           "com.intellij.psi.xml.XmlTag",
                           "com.intellij.psi.xml.XmlAttributeValue")
 
-// Rather than making this a mapOf(...) I made it an object with a get operator because this makes the mappings far easier to read and manage.
+// Rather than making this a mapOf(...) I made it an object with a get operator because this makes the mappings far
+// easier to read and manage.
 object PluginClasses {
    operator fun get(key: String) = when (key) {
       "Dart"                 -> "com.jetbrains.lang.dart.psi.DartStringLiteralExpression"
@@ -49,11 +50,11 @@ class RegexReferenceContributor: PsiReferenceContributor() {
 
       val pluginLoaders = PluginManager.getPlugins().stream()
             .map {PluginClasses[it.pluginId.idString] to it.pluginClassLoader}
-            .filter {(className, _)-> className != null}  // remove empties (for plugins we don't handle)
+            .filter {(className, _)-> className != null}  // keep the installed plugins that we handle
 
       Stream.concat(commonLoaders, pluginLoaders)
             .map {(className, loader)-> loader.loadPsiElementClass(className)}
-            .filter {it != null}  // the plugin is here, but we failed to load the named class
+            .filter {it != null}    // somehow the named class failed to load
             .map {StandardPatterns.instanceOf(it)}
             .forEach {registrar.registerReferenceProvider(it, RegexPsiReferenceProvider)}
    }
@@ -63,16 +64,13 @@ class RegexReferenceContributor: PsiReferenceContributor() {
             arrayOf(PsiStringRegexToHyperlink(element))
    }
 
-   private fun ClassLoader.loadPsiElementClass(stringLiteralClassName: String?): Class<PsiElement>? {
-      try {
-         if (stringLiteralClassName != null) {
+   private fun ClassLoader.loadPsiElementClass(stringLiteralClassName: String) =
+         try {
             @Suppress("UNCHECKED_CAST")
-            return Class.forName(stringLiteralClassName, true, this) as Class<PsiElement>
+            Class.forName(stringLiteralClassName, true, this) as Class<PsiElement>
          }
-      }
-      catch (e: ClassNotFoundException) { // todo pschaaf 04/120/18 15:04: log the error
-         // if we can't find the plugin (e.g. because it isn't installed) then skip it
-      }
-      return null
-   }
+         catch (e: ClassNotFoundException) { // todo pschaaf 04/120/18 15:04: log the error
+            // if we can't find the plugin (e.g. because it isn't installed) then skip it
+            null
+         }
 }

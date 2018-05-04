@@ -12,7 +12,7 @@ Out of the box IntelliJ lets you define Regular Expressions to turn plain-text e
 has turned the branch name ("DEVCCPERF-142") into a link to that case in a Jira installation.
 
 ## This Plugin
-This plugin applies those same rules to literal strings in your source code. Now annotations like this
+This plugin applies those same rules to quoted literal strings, XML attributes and XML element text. Now annotations like this
 `@TestCase("DEVCCPERF-142")` become hyperlinks, too. Of course you can define link patterns to go anywhere you like: for instance you could link `[Ww]ikipedia:(.*)` to `http://en.wikipedia.org/w/index.php?title=Special:Search&search=$1`
 
 ###Limitations

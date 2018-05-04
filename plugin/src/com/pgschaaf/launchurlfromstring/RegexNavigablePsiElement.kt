@@ -16,24 +16,22 @@
 
 package com.pgschaaf.launchurlfromstring
 
+import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.*
 import java.net.URI
 
-class RegexNavigablePsiElement(private val element: PsiElement, private val url: String): NavigatablePsiElement, PsiElement by element {
-   // ---- From Navigatable
+class RegexNavigablePsiElement(val element: PsiElement, val url: String): NavigatablePsiElement, PsiElement by element {
+   override fun getName(): String? = null
+   override fun canNavigate() = true
+   override fun canNavigateToSource() = false
+
    override fun navigate(b: Boolean) = BrowserUtil.browse(URI(url))
 
-   override fun canNavigate() = true
-
-   override fun canNavigateToSource() = true
-
-   // ---- From NavigationItem
-   override fun getName(): String? = null
-
-   override fun getPresentation(): ItemPresentation? = null
-
-   // ---- From PsiElement
-   override fun getNavigationElement() = this
+   override fun getPresentation() = object: ItemPresentation {
+      override fun getLocationString(): String? = null
+      override fun getIcon(p0: Boolean) = AllIcons.General.Web
+      override fun getPresentableText() = "Browse $url"
+   }
 }
