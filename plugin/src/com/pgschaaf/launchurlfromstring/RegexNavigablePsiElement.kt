@@ -22,10 +22,11 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.*
 import java.net.URI
 
-class RegexNavigablePsiElement(val element: PsiElement, val url: String): NavigatablePsiElement, PsiElement by element {
-   override fun getName(): String? = null
+class RegexNavigablePsiElement(private val element: PsiElement, private val url: String): NavigatablePsiElement, PsiElement by element {
    override fun canNavigate() = true
    override fun canNavigateToSource() = false
+   override fun getNavigationElement() = this
+   override fun getName(): String? = null
 
    override fun navigate(b: Boolean) = BrowserUtil.browse(URI(url))
 
