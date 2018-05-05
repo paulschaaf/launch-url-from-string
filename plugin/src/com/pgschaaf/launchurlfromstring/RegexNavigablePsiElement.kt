@@ -21,19 +21,19 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.ide.IdeBundle
 import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.*
-import java.net.URI
+import javax.swing.Icon
 
-class RegexNavigablePsiElement(private val element: PsiElement, private val url: String): NavigatablePsiElement, PsiElement by element {
+class RegexNavigablePsiElement(private val element: PsiElement,
+                               private val url: String): NavigatablePsiElement, ItemPresentation, PsiElement by element {
+   override fun getName(): String? = null
+
    override fun canNavigate() = true
    override fun canNavigateToSource() = false
    override fun getNavigationElement() = this
-   override fun getName(): String? = null
-
    override fun navigate(b: Boolean) = BrowserUtil.browse(url)
 
-   override fun getPresentation() = object: ItemPresentation {
-      override fun getLocationString(): String? = null
-      override fun getIcon(p0: Boolean) = AllIcons.General.Web
-      override fun getPresentableText() = IdeBundle.message("open.url.in.browser.tooltip")
-   }
+   override fun getIcon(p0: Boolean): Icon = AllIcons.General.Web
+   override fun getLocationString(): String? = null
+   override fun getPresentation() = this
+   override fun getPresentableText(): String = IdeBundle.message("open.url.in.browser.tooltip")
 }

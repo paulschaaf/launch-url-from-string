@@ -58,7 +58,9 @@ val PsiElement.clickableString
    }.unquoted
 
 val String.unquoted
-   get() = when (first()) {
+   get() = if (this.isEmpty())
+      this
+   else when (first()) {
       '"'  -> removeSurrounding("\"")
       '\'' -> removeSurrounding("'")
       else -> this
