@@ -18,6 +18,7 @@ package com.pgschaaf.launchurlfromstring
 
 import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
+import com.intellij.ide.IdeBundle
 import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.*
 import java.net.URI
@@ -28,11 +29,11 @@ class RegexNavigablePsiElement(private val element: PsiElement, private val url:
    override fun getNavigationElement() = this
    override fun getName(): String? = null
 
-   override fun navigate(b: Boolean) = BrowserUtil.browse(URI(url))
+   override fun navigate(b: Boolean) = BrowserUtil.browse(url)
 
    override fun getPresentation() = object: ItemPresentation {
       override fun getLocationString(): String? = null
       override fun getIcon(p0: Boolean) = AllIcons.General.Web
-      override fun getPresentableText() = "Browse $url"
+      override fun getPresentableText() = IdeBundle.message("open.url.in.browser.tooltip")
    }
 }
