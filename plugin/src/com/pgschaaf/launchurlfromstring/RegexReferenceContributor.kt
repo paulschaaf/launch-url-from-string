@@ -16,10 +16,12 @@
 
 package com.pgschaaf.launchurlfromstring
 
+import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.*
 import com.intellij.util.ProcessingContext
+import com.pgschaaf.util.withoutNulls
 import java.util.*
 import java.util.stream.Stream
 
@@ -36,28 +38,25 @@ class RegexReferenceContributor: PsiReferenceContributor() {
             .map {it to javaClass.classLoader}
 
       val pluginLoaders = Arrays.stream(PluginManager.getPlugins())
-            .map {PluginToStringLiteralClassNameMap[it.pluginId.idString] to it.pluginClassLoader}
-            .filter {(className, _)-> className != null}  // ignore any plugins that we don't handle
+            .map {PluginStringLiteralClassNameMap[it] to it.pluginClassLoader}
 
       Stream.concat(commonLoaders, pluginLoaders)
             .map {(className, loader)-> loadPsiElementClass(className, loader)}
-            .filter {clazz-> clazz != null}    // somehow the named class failed to load
+            .withoutNulls()
             .map(StandardPatterns::instanceOf)
             .forEach {registrar.registerReferenceProvider(it, RegexPsiReferenceProvider)}
    }
 
-   private fun loadPsiElementClass(stringLiteralClassName: String?, loader: ClassLoader) =
+   private fun loadPsiElementClass(stringLiteralClassName: String, loader: ClassLoader) =
          try {
-            @Suppress("UNCHECKED_CAST")
-            if (stringLiteralClassName == null) {
-               // todo pschaaf 05/124/18 17:05: log it as this shouldn't happen
-               null
-            }
-            else Class.forName(stringLiteralClassName, true, loader) as Class<PsiElement>
+            if (stringLiteralClassName.isEmpty())
+               null  // we don't handle this plugin
+            else
+               @Suppress("UNCHECKED_CAST")
+               Class.forName(stringLiteralClassName, true, loader) as Class<PsiElement>
          }
-         catch (e: ClassNotFoundException) { // todo pschaaf 04/120/18 15:04: log the error
-            // if we can't find the plugin (e.g. because it isn't installed) then skip it
-            null
+         catch (e: ClassNotFoundException) {
+            null  // though we handle this plugin it isn't installed
          }
 
    private object RegexPsiReferenceProvider: PsiReferenceProvider() {

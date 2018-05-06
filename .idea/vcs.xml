@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-    <component name="IssueNavigationConfiguration">
-        <option name="links">
-            <list>
-                <IssueNavigationLink>
-                    <option name="issueRegexp" value="(?i)\b(ab|apollo|bc|cc|clm|cm|ctc|devccperf|doc|gl|ide|pc|pl|rd|rn|sam|std|suite|ux)-\d+\b" />
-                    <option name="linkRegexp" value="https://jira.guidewire.com/browse/$0" />
-                </IssueNavigationLink>
-                <IssueNavigationLink>
-                    <option name="issueRegexp" value="\b(?i)(DE|US)\d+" />
-                    <option name="linkRegexp" value="https://rally1.rallydev.com/slm/rally.sp#/search?keywords=$0" />
-                </IssueNavigationLink>
-                <IssueNavigationLink>
-                    <option name="issueRegexp" value="\br\d+\b" />
-                    <option name="linkRegexp" value="http://riki/index.php/Req:$0" />
-                </IssueNavigationLink>
-                <IssueNavigationLink>
-                    <option name="issueRegexp" value="wikipedia:([\w()!@#$%^*_+-=`~]+)" />
-                    <option name="linkRegexp" value="http://en.wikipedia.org/w/index.php?title=Special:Search&amp;search=$1" />
-                </IssueNavigationLink>
-            </list>
-        </option>
-    </component>
+  <component name="IssueNavigationConfiguration">
+    <option name="links">
+      <list>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="(?i)\b(ab|apollo|bc|cc|clm|cm|ctc|devccperf|doc|gl|ide|pc|pl|rd|rn|sam|std|suite|ux)-\d+\b" />
+          <option name="linkRegexp" value="https://jira.guidewire.com/browse/$0" />
+        </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="\b(?i)(DE|US)\d+" />
+          <option name="linkRegexp" value="https://rally1.rallydev.com/slm/rally.sp#/search?keywords=$0" />
+        </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="\b[Rr]\d+\b" />
+          <option name="linkRegexp" value="http://riki/index.php/Req:$0" />
+        </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="wikipedia:([\w()!@#$%^*_+-=`~]+)" />
+          <option name="linkRegexp" value="http://en.wikipedia.org/w/index.php?title=Special:Search&amp;search=$1" />
+        </IssueNavigationLink>
+      </list>
+    </option>
+  </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
   </component>

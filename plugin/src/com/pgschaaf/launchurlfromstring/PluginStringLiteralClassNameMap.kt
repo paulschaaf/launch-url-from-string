@@ -16,15 +16,15 @@
 
 package com.pgschaaf.launchurlfromstring
 
+import com.intellij.ide.plugins.IdeaPluginDescriptor
+
 /**
- * This is a map of plugin ID's to the name of the class that implements the parse node for a literal
+ * This is a map of plugins to the name of the class that implements the parse node for a literal
  * String in that plugin. If a language is not listed here it will only work if the plugin uses the
  * standard Java classes (which seems unlikely).
  */
-// I implemented this an 'object::get(String): String' rather than a 'fun f(): Map<String, String>()
-// because this makes the mapping code far easier to read and manage.
-object PluginToStringLiteralClassNameMap {
-   operator fun get(key: String) = when (key) {
+object PluginStringLiteralClassNameMap {
+   operator fun get(plugin: IdeaPluginDescriptor) = when (plugin.pluginId.idString) {
       "Dart"                 -> "com.jetbrains.lang.dart.psi.DartStringLiteralExpression"
       "Gosu"                 -> "gw.gosu.ij.psi.GosuPsiLiteralExpression"
       "JavaScript"           -> "com.intellij.lang.javascript.psi.JSLiteralExpression"
@@ -33,6 +33,6 @@ object PluginToStringLiteralClassNameMap {
       "PythonCore"           -> "com.jetbrains.python.psi.PyStringLiteralExpression"
 //      "org.jetbrains.plugins.ruby" -> "org.jetbrains.plugins.ruby.ruby.lang.psi.basicTypes.stringLiterals.RStringLiteral"
 //      "org.jetbrains.plugins.ruby" -> "org.jetbrains.plugins.ruby.ruby.lang.psi.expressions.RLiteral"
-      else                   -> null
+      else                   -> ""
    }
 }
