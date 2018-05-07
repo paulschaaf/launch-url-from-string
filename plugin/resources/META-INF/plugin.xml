@@ -22,19 +22,36 @@
         Paul Schaaf
     </vendor>
 
-    <description><![CDATA[
-        Enables hyperlink navigation from any matching string literal,<br/>
-        xml attribute value or xml element text to a URL defined by the <br/>
-        "Issue Navigation" rules in the VCS settings.<br/>
+    <description>
+        <![CDATA[
+        <h2>Background</h2>
+        Out of the box IntelliJ lets you define Regular Expressions to turn plain-text entries in your check-in comments and branch names into hyperlinks. The rules for doing this are defined on the VCS settings screen "Issue Navigation".<br/>
+        <h2>This Plugin</h2>
+        This plugin applies those same rules to quoted literal strings in source code in any of the following languages:
+        <ul>
+            <li>Dart</li>
+            <li>Gosu</li>
+            <li>Java</li>
+            <li>JavaScript</li>
+            <li>Kotlin</li>
+            <li>Scala</li>
+            <li>Php</li>
+            <li>Python</li>
+            <li>XML (applied to attributes and element text)</li>
+        </ul>
+Now annotations like <pre>@TestCase("DEVCCPERF-142")</pre> become hyperlinks, too. <br/>
+Of course you can define link patterns to go anywhere you like: for instance you could link <pre>[Ww]ikipedia:(.*)</pre> to <pre>http://en.wikipedia.org/w/index.php?title=Special:Search&search=$1</pre><p/>
+        <h2>Acknowledgements</h2>
+        Special thanks to Max Ishchenko, whose plugin <a href="https://github.com/ishchenko/idea-navigate-from-literal">idea-navigate-url-from-literal</a> inspired and guided this one.<br/>
+        Thanks too to JetBrains for releasing <a href="https://github.com/JetBrains/intellij-community">the source</a> to the wonderful <a href="https://www.jetbrains.com/idea/features/">IntelliJ Community Edition</a>, and for <a href="https://kotlinlang.org/">Kotlin</a>&mdash;my new favorite programming language.
     ]]>
     </description>
 
-    <change-notes><![CDATA[
-    <ul>
+    <change-notes><![CDATA[<ul>
       <li>1.0 Initial release
-     </ul>]]></change-notes>
+    </ul>]]></change-notes>
 
-    <idea-version since-build="120.0"/>
+    <idea-version since-build="143.2370"/>
 
     <depends>com.intellij.modules.lang</depends>
 

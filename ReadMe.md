@@ -18,16 +18,16 @@ This plugin applies those same rules to quoted literal strings, XML attributes a
 ### Limitations
 The Regex patterns are matched against single literal String values. This means things like `"DEVCCPERF" + "-142" won't match.
 
-### Supported Languages
+### Supported Languages*
 - [Dart](https://www.dartlang.org/)
 - [Gosu](https://gosu-lang.github.io/)
-- [JavaScript](https://www.javascript.com/)
 - [Java](https://www.java.com/en/)
+- [JavaScript](https://www.javascript.com/)
 - [Kotlin](https://kotlinlang.org/)
 - [Scala](https://www.scala-lang.org/)
 - [Php](http://www.php.net/)
 - [Python](https://www.python.org/)
-- \[Some other language] - Probably not<sup>*</sup>
+- [XML](https://www.w3.org/XML/) (attributes and element text)
 
 <sup>* The Strings are found by navigating the PSI parse tree. This means that this feature will only work with languages whose Strings are represented by `com.intellij.psi.PsiLiteral` (like Java and Scala), or whose String PSI literal class is explicitly handled in this plugin. </sup>
 
@@ -35,6 +35,11 @@ The Regex patterns are matched against single literal String values. This means 
 # Installation Instructions
  Install it like a normal plugin, then restart. Define a few Regex mappings under File/Settings/Version Control/Issue Navigation. Now you should be able to CTRL-click on matching Strings.
  
+# Acknowledgements
+Special thanks to Max Ishchenko, whose plugin [idea-navigate-url-from-literal](https://github.com/ishchenko/idea-navigate-from-literal) inspired and guided this one.
+
+Thanks too to JetBrains for releasing [the source](https://github.com/JetBrains/intellij-community) to the wonderful [IntelliJ Community Edition](https://www.jetbrains.com/idea/features/), and for [Kotlin](https://kotlinlang.org/)&mdash;my new favorite programming language.
+
 # Source Code
  This plugin is written in Kotlin. The source is available on [GitHub](https://github.com/paulschaaf/launch-url-from-string) under the Apache License.
  
