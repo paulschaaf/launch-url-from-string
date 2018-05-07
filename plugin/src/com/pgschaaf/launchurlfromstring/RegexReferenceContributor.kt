@@ -16,7 +16,6 @@
 
 package com.pgschaaf.launchurlfromstring
 
-import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.*
@@ -56,7 +55,7 @@ class RegexReferenceContributor: PsiReferenceContributor() {
                Class.forName(stringLiteralClassName, true, loader) as Class<PsiElement>
          }
          catch (e: ClassNotFoundException) {
-            null  // though we handle this plugin it isn't installed
+            null  // though we handle this plugin, it isn't installed
          }
 
    private object RegexPsiReferenceProvider: PsiReferenceProvider() {
