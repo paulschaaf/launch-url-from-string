@@ -7,7 +7,7 @@ Enables hyperlink navigation from any matching string literal, XML attribute val
 ## Background
 Out of the box IntelliJ lets you define Regular Expressions to turn plain-text entries in your check-in comments and branch names into hyperlinks. The most common use case is to link issues back to your issue tracker. For instance the pattern and mapping shown here 
  
-![IntelliJ Issue Navigation Settings](./doc/IJIssueNavigation.png)
+![IntelliJ Issue Navigation Settings](./plugin/doc/IJIssueNavigation.png)
 
 has turned the branch name ("DEVCCPERF-142") into a link to that case in a Jira installation.
 
