@@ -8,10 +8,8 @@
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/doc" type="java-resource" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="IntelliJ IDEA Community Edition IC-181.4668.68" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="ruby" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="kotlin-compiler" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="ij-gosu-2.0.0-rc-SNAPSHOT" level="application" />
+    <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
   </component>
 </module>
