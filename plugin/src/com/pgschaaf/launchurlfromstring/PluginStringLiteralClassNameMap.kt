@@ -31,6 +31,8 @@ object PluginStringLiteralClassNameMap {
       "org.jetbrains.kotlin" -> "org.jetbrains.kotlin.psi.KtStringTemplateExpression"
       "com.jetbrains.php"    -> "com.jetbrains.php.lang.psi.elements.StringLiteralExpression"
       "PythonCore"           -> "com.jetbrains.python.psi.PyStringLiteralExpression"
+//      "org.jetbrains.plugins.ruby" -> "com.intellij.psi.impl.source.tree.LeafPsiElement"
+//      "org.jetbrains.plugins.ruby" -> "org.jetbrains.plugins.ruby.ruby.lang.psi.basicTypes.stringLiterals.baseString.RDStringLiteralImpl"
 //      "org.jetbrains.plugins.ruby" -> "org.jetbrains.plugins.ruby.ruby.lang.psi.basicTypes.stringLiterals.RStringLiteral"
 //      "org.jetbrains.plugins.ruby" -> "org.jetbrains.plugins.ruby.ruby.lang.psi.expressions.RLiteral"
       else                   -> ""

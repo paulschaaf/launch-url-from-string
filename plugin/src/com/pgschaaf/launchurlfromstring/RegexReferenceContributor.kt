@@ -47,16 +47,16 @@ class RegexReferenceContributor: PsiReferenceContributor() {
    }
 
    private fun loadPsiElementClass(stringLiteralClassName: String, loader: ClassLoader) =
-         try {
-            if (stringLiteralClassName.isEmpty())
-               null  // we don't handle this plugin
-            else
+         if (stringLiteralClassName.isEmpty())
+            null  // we don't handle this plugin
+         else
+            try {
                @Suppress("UNCHECKED_CAST")
                Class.forName(stringLiteralClassName, true, loader) as Class<PsiElement>
-         }
-         catch (e: ClassNotFoundException) {
-            null  // though we handle this plugin, it isn't installed
-         }
+            }
+            catch (e: ClassNotFoundException) {
+               null  // though we handle this plugin, it isn't installed
+            }
 
    private object RegexPsiReferenceProvider: PsiReferenceProvider() {
       override fun getReferencesByElement(element: PsiElement, context: ProcessingContext) =
