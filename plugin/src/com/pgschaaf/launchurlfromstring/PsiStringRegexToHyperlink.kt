@@ -16,16 +16,13 @@
 
 package com.pgschaaf.launchurlfromstring
 
-import com.intellij.icons.AllIcons
-import com.intellij.ide.BrowserUtil
-import com.intellij.ide.IdeBundle
-import com.intellij.navigation.ItemPresentation
+import com.intellij.openapi.paths.WebReference
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vcs.IssueNavigationConfiguration
 import com.intellij.psi.*
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
-import javax.swing.Icon
+import com.pgschaaf.util.*
 
 class PsiStringRegexToHyperlink<T: PsiElement>(element: T): PsiPolyVariantReferenceBase<T>(element, true) {
    private val project
@@ -36,15 +33,17 @@ class PsiStringRegexToHyperlink<T: PsiElement>(element: T): PsiPolyVariantRefere
 
    override fun multiResolve(incompleteCode: Boolean) = multiResolve(element.clickableString)
 
-   private fun multiResolve(stringValue: String): Array<ResolveResult?> =
+   private fun multiResolve(stringValue: String) =
          if (stringValue.isEmpty())
-            arrayOfNulls(0)
+            arrayOfNulls<ResolveResult>(0)
          else
             issueNavigationConfiguration.links.stream()
                   .map {link-> link.issuePattern.toRegex() to link.linkRegexp}
                   .filter {(pattern, _)-> pattern.containsMatchIn(stringValue)}
                   .map {(pattern, urlPattern)-> stringValue.replace(pattern, urlPattern)}
-                  .map {urlString-> element.resolveNavigationTo(urlString)}
+                  .map {urlString -> WebReference(element, urlString).resolve()}
+                  .withoutNulls()
+                  .map {reference -> PsiElementResolveResult(reference)}
                   .limit(1)  // look no further than the first match
                   .toArray {length-> arrayOfNulls<ResolveResult>(length)}
 
@@ -69,22 +68,3 @@ val String.unquoted
       '\'' -> removeSurrounding("'")
       else -> this
    }
-
-fun PsiElement.resolveNavigationTo(url: String) = RegexNavigablePsiElement(this, url).resolveNavigation()
-
-class RegexNavigablePsiElement(element: PsiElement,
-                               private val url: String): NavigatablePsiElement, ItemPresentation, PsiElement by element {
-   override fun getName(): String? = null
-
-   override fun canNavigate() = true
-   override fun canNavigateToSource() = false
-   override fun getNavigationElement() = this
-   override fun navigate(b: Boolean) = BrowserUtil.browse(url)
-
-   override fun getIcon(p0: Boolean): Icon = AllIcons.General.Web
-   override fun getLocationString(): String? = null
-   override fun getPresentation() = this
-   override fun getPresentableText(): String = IdeBundle.message("open.url.in.browser.tooltip")
-
-   fun resolveNavigation() = PsiElementResolveResult(this)
-}

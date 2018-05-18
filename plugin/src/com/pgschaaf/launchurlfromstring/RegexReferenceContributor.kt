@@ -21,6 +21,7 @@ import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.*
 import com.intellij.util.ProcessingContext
 import com.pgschaaf.util.withoutNulls
+import java.io.File
 import java.util.*
 import java.util.stream.Stream
 
@@ -31,13 +32,17 @@ val CommonStringLiteralClassNames = setOf("com.intellij.psi.PsiLiteral",   // co
                                           "com.intellij.psi.xml.XmlTag",
                                           "com.intellij.psi.xml.XmlAttributeValue")
 
+private val PropertiesFileName = "com.pgschaaf.launchurlfromstring.StringLiteralClassNames.properties"
+
 class RegexReferenceContributor: PsiReferenceContributor() {
+   val pluginClassNames = PropertiesFile(PropertiesFileName).map
+
    override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
       val commonLoaders = CommonStringLiteralClassNames.stream()
             .map {it to javaClass.classLoader}
 
       val pluginLoaders = Arrays.stream(PluginManager.getPlugins())
-            .map {PluginStringLiteralClassNameMap[it] to it.pluginClassLoader}
+            .map {pluginClassNames.getOrDefault(it.pluginId.idString, "") to it.pluginClassLoader}
 
       Stream.concat(commonLoaders, pluginLoaders)
             .map {(className, loader)-> loadPsiElementClass(className, loader)}
@@ -62,4 +67,9 @@ class RegexReferenceContributor: PsiReferenceContributor() {
       override fun getReferencesByElement(element: PsiElement, context: ProcessingContext) =
             arrayOf(PsiStringRegexToHyperlink(element))
    }
+}
+
+class PropertiesFile(val filename: String) {
+   val bundle = ResourceBundle.getBundle(filename)
+   val map = bundle.keySet().associateBy {bundle.getString(it)}
 }
