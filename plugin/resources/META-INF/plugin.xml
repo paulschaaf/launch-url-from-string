@@ -16,6 +16,7 @@
 
 <idea-plugin>
     <id>launch-url-from-string</id>
+    <description>clm-123</description>
     <name>Launch URL from String</name>
     <version>1.0b4</version>
     <vendor email="paul.schaaf+intellij@gmail.com" url="https://github.com/paulschaaf/launch-url-from-string">

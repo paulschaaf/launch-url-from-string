@@ -17,13 +17,18 @@
 package com.pgschaaf.launchurlfromstring
 
 import com.intellij.ide.plugins.PluginManager
+import com.intellij.openapi.extensions.PluginDescriptor
+import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.*
 import com.intellij.util.ProcessingContext
 import com.pgschaaf.util.withoutNulls
-import java.io.File
 import java.util.*
+import java.util.stream.Collectors
 import java.util.stream.Stream
+
+private const val PropertiesFileName = "StringLiteralClassNames"
+private const val testPlugin = "wikipedia:Kotlin_(programming_language)"
 
 /**
  * These are likely to be present regardless of which language plugins are.
@@ -32,44 +37,48 @@ val CommonStringLiteralClassNames = setOf("com.intellij.psi.PsiLiteral",   // co
                                           "com.intellij.psi.xml.XmlTag",
                                           "com.intellij.psi.xml.XmlAttributeValue")
 
-private val PropertiesFileName = "com.pgschaaf.launchurlfromstring.StringLiteralClassNames.properties"
-
 class RegexReferenceContributor: PsiReferenceContributor() {
-   val pluginClassNames = PropertiesFile(PropertiesFileName).map
+   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) = ElementPatterns.registerIn(registrar)
+}
 
-   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
+object ElementPatterns {
+   val bundle = ResourceBundle.getBundle(PropertiesFileName)
+   val handledPlugins = bundle.keySet()
+
+   /** The Psi Element classes for which we will handle navigation **/
+   var patterns: List<ElementPattern<PsiElement>>
+      private set
+
+   init {
+      val pluginLoaders = Arrays.stream(PluginManager.getPlugins())
+            .filter {plugin-> handledPlugins.contains(plugin.pluginId.idString)}
+            .map {plugin-> bundle.getString(plugin.pluginId.idString)!! to plugin.pluginClassLoader}
+
       val commonLoaders = CommonStringLiteralClassNames.stream()
             .map {it to javaClass.classLoader}
 
-      val pluginLoaders = Arrays.stream(PluginManager.getPlugins())
-            .map {pluginClassNames.getOrDefault(it.pluginId.idString, "") to it.pluginClassLoader}
-
-      Stream.concat(commonLoaders, pluginLoaders)
+      patterns = Stream.concat(commonLoaders, pluginLoaders)
             .map {(className, loader)-> loadPsiElementClass(className, loader)}
             .withoutNulls()
             .map(StandardPatterns::instanceOf)
-            .forEach {registrar.registerReferenceProvider(it, RegexPsiReferenceProvider)}
+            .collect(Collectors.toList<ElementPattern<PsiElement>>())
    }
 
    private fun loadPsiElementClass(stringLiteralClassName: String, loader: ClassLoader) =
-         if (stringLiteralClassName.isEmpty())
-            null  // we don't handle this plugin
-         else
-            try {
-               @Suppress("UNCHECKED_CAST")
-               Class.forName(stringLiteralClassName, true, loader) as Class<PsiElement>
-            }
-            catch (e: ClassNotFoundException) {
-               null  // though we handle this plugin, it isn't installed
-            }
+         try {
+            @Suppress("UNCHECKED_CAST")
+            Class.forName(stringLiteralClassName, true, loader) as Class<PsiElement>
+         }
+         catch (e: ClassNotFoundException) {
+            null  // though we handle this plugin, it isn't installed
+         }
+
+   fun registerIn(registrar: PsiReferenceRegistrar) = patterns.forEach {
+      registrar.registerReferenceProvider(it, RegexPsiReferenceProvider)
+   }
 
    private object RegexPsiReferenceProvider: PsiReferenceProvider() {
       override fun getReferencesByElement(element: PsiElement, context: ProcessingContext) =
             arrayOf(PsiStringRegexToHyperlink(element))
    }
-}
-
-class PropertiesFile(val filename: String) {
-   val bundle = ResourceBundle.getBundle(filename)
-   val map = bundle.keySet().associateBy {bundle.getString(it)}
 }
