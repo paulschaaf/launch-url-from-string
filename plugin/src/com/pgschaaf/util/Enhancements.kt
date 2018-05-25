@@ -16,7 +16,23 @@
 
 package com.pgschaaf.util
 
+import java.util.*
 import java.util.stream.Stream
+
 
 @Suppress("UNCHECKED_CAST")
 fun <T> Stream<T?>.withoutNulls() = filter {it != null} as Stream<T>
+
+
+fun ResourceBundle.keysAndValues(): Stream<Pair<String, String>> =
+      this.keySet().stream().map {it to getString(it)}
+
+
+fun <T> ClassLoader.load(name: String) =
+      try {
+         @Suppress("UNCHECKED_CAST")
+         Class.forName(name, true, this) as Class<T>
+      }
+      catch (e: ClassNotFoundException) {
+         null
+      }
