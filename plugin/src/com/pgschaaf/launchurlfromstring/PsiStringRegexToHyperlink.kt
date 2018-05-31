@@ -17,54 +17,39 @@
 package com.pgschaaf.launchurlfromstring
 
 import com.intellij.openapi.paths.WebReference
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vcs.IssueNavigationConfiguration
+import com.intellij.openapi.vcs.IssueNavigationLink
 import com.intellij.psi.*
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
 import com.pgschaaf.util.*
 
 class PsiStringRegexToHyperlink<T: PsiElement>(element: T): PsiPolyVariantReferenceBase<T>(element, true) {
-   private val project
-      get() = ProjectManager.getInstance().openProjects.first()
-
-   private val issueNavigationConfiguration
-      get() = IssueNavigationConfiguration.getInstance(project)
-
    override fun multiResolve(incompleteCode: Boolean) = multiResolve(element.clickableString)
-
-   private fun multiResolve(stringValue: String) =
-         if (stringValue.isEmpty())
-            arrayOfNulls<ResolveResult>(0)
-         else
-            issueNavigationConfiguration.links.stream()
-                  .map {link-> link.issuePattern.toRegex() to link.linkRegexp}
-                  .filter {(pattern, _)-> pattern.containsMatchIn(stringValue)}
-                  .map {(pattern, urlPattern)-> stringValue.replace(pattern, urlPattern)}
-                  .map {urlString -> WebReference(element, urlString).resolve()}
-                  .withoutNulls()
-                  .map {reference -> PsiElementResolveResult(reference)}
-                  .limit(1)  // look no further than the first match
-                  .toArray {length-> arrayOfNulls<ResolveResult>(length)}
 
    override fun getVariants() = arrayOfNulls<Any>(0)
 
    override fun isReferenceTo(element: PsiElement) = false
+
+   private fun multiResolve(selectedString: String?) =
+         if (selectedString == null)
+            arrayOfNulls<ResolveResult>(0)
+         else
+            IssueNavigationConfiguration.getInstance(element.project).links.stream()
+                  .map {link-> link.destinationFor(selectedString)}
+                  .filter {destStr -> destStr.isNotEmpty() && destStr != selectedString}
+                  .limit(1)  // look no further than the first match
+                  .map {destStr-> WebReference(element, destStr).resolve()}
+                  .map {reference-> PsiElementResolveResult(reference!!)}
+                  .toArray {length-> arrayOfNulls<ResolveResult>(length)}
 }
 
 val PsiElement.clickableString
    get() = when (this) {
-      is PsiLiteral        -> value as? String ?: ""
-      is XmlAttributeValue -> value ?: ""
+//      is PsiLiteral        -> value as? String ?: ""  // todo pschaaf 05/30/18 10:05: unneeded for Java, Kotlin or XML
+      is XmlAttributeValue -> value
       is XmlTag            -> value.trimmedText
-      else                 -> text
-   }.unquoted
-
-val String.unquoted
-   get() = if (this.isEmpty())
-      this
-   else when (first()) {
-      '"'  -> removeSurrounding("\"")
-      '\'' -> removeSurrounding("'")
-      else -> this
+      else                 -> text.unquoted
    }
+
+fun IssueNavigationLink.destinationFor(text: String) = issuePattern.toRegex().replace(text, linkRegexp)

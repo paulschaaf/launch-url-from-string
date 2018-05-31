@@ -36,3 +36,13 @@ fun <T> ClassLoader.load(name: String) =
       catch (e: ClassNotFoundException) {
          null
       }
+
+
+val String.unquoted
+   get() = if (this.isEmpty())
+      this
+   else when (first()) {
+      '"'  -> removeSurrounding("\"")
+      '\'' -> removeSurrounding("'")
+      else -> this
+   }
