@@ -44,19 +44,21 @@ object ApplicationContext {
    private val defaultClassLoader = RegexReferenceContributor::class.java.classLoader
 
    /** The Psi Element classes for which we will handle navigation **/
-   val patterns: List<ElementPattern<PsiElement>> = ResourceBundle.getBundle(PropertiesFileName)
-         .keysAndValues()
-         .map {(className, pluginId)->
-            className to pluginClassLoaders.getOrDefault(pluginId, defaultClassLoader)
-         }
-         .map {(className, loader)-> loader.load<PsiElement>(className)}
-         .withoutNulls()
-         .map(StandardPatterns::instanceOf)
-         .collect(Collectors.toList())
+   val patterns: List<ElementPattern<PsiElement>> =
+         ResourceBundle.getBundle(PropertiesFileName)
+               .keysAndValues()
+               .map {(className, pluginId)->
+                  className to pluginClassLoaders.getOrDefault(pluginId, defaultClassLoader)
+               }
+               .map {(className, loader)-> loader.load<PsiElement>(className)}
+               .withoutNulls()
+               .map(StandardPatterns::instanceOf)
+               .collect(Collectors.toList())
 
-   fun submitTo(registrar: PsiReferenceRegistrar) = patterns.forEach {
-      registrar.registerReferenceProvider(it, RegexPsiReferenceProvider)
-   }
+   fun submitTo(registrar: PsiReferenceRegistrar) =
+         patterns.forEach {
+            registrar.registerReferenceProvider(it, RegexPsiReferenceProvider)
+         }
 
    private object RegexPsiReferenceProvider: PsiReferenceProvider() {
       override fun getReferencesByElement(element: PsiElement, context: ProcessingContext) =

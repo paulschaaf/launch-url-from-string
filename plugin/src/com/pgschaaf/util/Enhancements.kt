@@ -19,7 +19,6 @@ package com.pgschaaf.util
 import java.util.*
 import java.util.stream.Stream
 
-
 @Suppress("UNCHECKED_CAST")
 fun <T> Stream<T?>.withoutNulls() = filter {it != null} as Stream<T>
 
@@ -39,10 +38,11 @@ fun <T> ClassLoader.load(name: String) =
 
 
 val String.unquoted
-   get() = if (this.isEmpty())
-      this
-   else when (first()) {
-      '"'  -> removeSurrounding("\"")
-      '\'' -> removeSurrounding("'")
-      else -> this
-   }
+   get() =
+      if (this.isEmpty())
+         this
+      else when (first()) {
+         '"'  -> removeSurrounding("\"")
+         '\'' -> removeSurrounding("'")
+         else -> this
+      }

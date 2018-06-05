@@ -25,15 +25,14 @@ import com.intellij.psi.xml.XmlTag
 import com.pgschaaf.util.*
 
 class PsiStringRegexToHyperlink<T: PsiElement>(element: T): PsiPolyVariantReferenceBase<T>(element, true) {
-   override fun multiResolve(incompleteCode: Boolean) = multiResolve(element.clickableString)
-
    override fun getVariants() = arrayOfNulls<Any>(0)
-
    override fun isReferenceTo(element: PsiElement) = false
 
-   private fun multiResolve(selectedString: String?) =
-         if (selectedString == null)
-            arrayOfNulls<ResolveResult>(0)
+   override fun multiResolve(incompleteCode: Boolean) = multiResolve(element.clickableString)
+
+   private fun multiResolve(selectedString: String): Array<ResolveResult?> =
+         if (selectedString.isEmpty())
+            arrayOfNulls(0)
          else
             IssueNavigationConfiguration.getInstance(element.project).links.stream()
                   .map {link-> link.destinationFor(selectedString)}
@@ -47,7 +46,7 @@ class PsiStringRegexToHyperlink<T: PsiElement>(element: T): PsiPolyVariantRefere
 val PsiElement.clickableString
    get() = when (this) {
 //      is PsiLiteral        -> value as? String ?: ""  // todo pschaaf 05/30/18 10:05: unneeded for Java, Kotlin or XML
-      is XmlAttributeValue -> value
+      is XmlAttributeValue -> value ?: ""
       is XmlTag            -> value.trimmedText
       else                 -> text.unquoted
    }
