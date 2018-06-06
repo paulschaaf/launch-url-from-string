@@ -28,19 +28,19 @@ class PsiStringRegexToHyperlink<T: PsiElement>(element: T): PsiPolyVariantRefere
    override fun getVariants() = arrayOfNulls<Any>(0)
    override fun isReferenceTo(element: PsiElement) = false
 
-   override fun multiResolve(incompleteCode: Boolean) = multiResolve(element.clickableString)
-
-   private fun multiResolve(selectedString: String): Array<ResolveResult?> =
-         if (selectedString.isEmpty())
-            arrayOfNulls(0)
-         else
-            IssueNavigationConfiguration.getInstance(element.project).links.stream()
-                  .map {link-> link.destinationFor(selectedString)}
-                  .filter {destStr -> destStr.isNotEmpty() && destStr != selectedString}
-                  .limit(1)  // look no further than the first match
-                  .map {destStr-> WebReference(element, destStr).resolve()}
-                  .map {reference-> PsiElementResolveResult(reference!!)}
-                  .toArray {length-> arrayOfNulls<ResolveResult>(length)}
+   override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult?> {
+      val selectedString = element.clickableString
+      return if (selectedString.isEmpty())
+         arrayOfNulls(0)
+      else
+         IssueNavigationConfiguration.getInstance(element.project).links.stream()
+               .map {link-> link.destinationFor(selectedString)}
+               .filter {destStr-> destStr.isNotEmpty() && destStr != selectedString}
+               .limit(1)  // look no further than the first match
+               .map {destStr-> WebReference(element, destStr).resolve()}
+               .map {reference-> PsiElementResolveResult(reference!!)}
+               .toArray {length-> arrayOfNulls<ResolveResult>(length)}
+   }
 }
 
 val PsiElement.clickableString
