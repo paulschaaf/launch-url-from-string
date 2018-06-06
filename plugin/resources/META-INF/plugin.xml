@@ -54,7 +54,7 @@ Of course you can define link patterns to go anywhere you like: for instance you
     <idea-version since-build="143.2370"/>
 
     <extensions defaultExtensionNs="com.intellij">
-        <psi.referenceContributor implementation="com.pgschaaf.launchurlfromstring.RegexReferenceContributor"/>
+        <psi.referenceContributor implementation="com.pgschaaf.launchurlfromstring.RegexPsiReferenceContributor"/>
     </extensions>
 
 </idea-plugin>

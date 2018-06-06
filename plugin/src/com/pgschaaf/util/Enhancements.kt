@@ -16,18 +16,24 @@
 
 package com.pgschaaf.util
 
+import com.intellij.openapi.vcs.IssueNavigationLink
+import com.intellij.psi.PsiElement
+import com.intellij.psi.xml.XmlAttributeValue
+import com.intellij.psi.xml.XmlTag
 import java.util.*
 import java.util.stream.Stream
+
+// Click on the String value to test the plugin
+private const val testPlugin = "wikipedia:Kotlin_(programming_language)"
 
 @Suppress("UNCHECKED_CAST")
 fun <T> Stream<T?>.withoutNulls() = filter {it != null} as Stream<T>
 
-
+/** Return the a Stream of the key-value pairs **/
 fun ResourceBundle.keysAndValues(): Stream<Pair<String, String>> =
       this.keySet().stream().map {it to getString(it)}
 
-
-fun <T> ClassLoader.load(name: String) =
+fun <T> ClassLoader.tryToLoad(name: String) =
       try {
          @Suppress("UNCHECKED_CAST")
          Class.forName(name, true, this) as Class<T>
@@ -36,7 +42,7 @@ fun <T> ClassLoader.load(name: String) =
          null
       }
 
-
+/** Return a copy of this string with the outer layer of quotes (if any) removed. **/
 val String.unquoted
    get() =
       if (this.isEmpty())
@@ -46,3 +52,15 @@ val String.unquoted
          '\'' -> removeSurrounding("'")
          else -> this
       }
+
+/** Return the string portion of this PsiElement that should be treated as a hyperlink **/
+val PsiElement.clickableString
+   get() = when (this) {
+//      is PsiLiteral        -> value as? String ?: ""  // todo pschaaf 05/30/18 10:05: unneeded for Java, Kotlin or XML
+      is XmlAttributeValue -> value ?: ""
+      is XmlTag            -> value.trimmedText
+      else                 -> text.unquoted
+   }
+
+/** Return the URL to which this link will navigate. **/
+fun IssueNavigationLink.destinationFor(text: String) = issuePattern.toRegex().replace(text, linkRegexp)
