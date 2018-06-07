@@ -16,11 +16,10 @@
 
 package com.pgschaaf.launchurlfromstring
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReferenceContributor
-import com.intellij.psi.PsiReferenceProvider
-import com.intellij.psi.PsiReferenceRegistrar
+import com.intellij.openapi.paths.WebReference
+import com.intellij.psi.*
 import com.intellij.util.ProcessingContext
+import com.pgschaaf.util.url
 
 object RegexPsiReferenceContributor: PsiReferenceContributor() {
    override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) = ApplicationContext.psiElementPatterns.forEach {
@@ -28,8 +27,11 @@ object RegexPsiReferenceContributor: PsiReferenceContributor() {
    }
 
    object RegexPsiReferenceProvider: PsiReferenceProvider() {
-      override fun getReferencesByElement(element: PsiElement, context: ProcessingContext) =
-            arrayOf(PsiStringRegexToHyperlink(element))
+      override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference?> {
+         val url = element.url
+         return if (url.isNotEmpty())
+            arrayOf(WebReference(element, url))
+         else arrayOfNulls(0)
+      }
    }
 }
-

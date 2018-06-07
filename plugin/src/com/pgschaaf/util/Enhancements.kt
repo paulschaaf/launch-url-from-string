@@ -16,10 +16,12 @@
 
 package com.pgschaaf.util
 
+import com.intellij.openapi.vcs.IssueNavigationConfiguration
 import com.intellij.openapi.vcs.IssueNavigationLink
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.containers.getIfSingle
 import java.util.*
 import java.util.stream.Stream
 
@@ -42,7 +44,7 @@ fun <T> ClassLoader.tryToLoad(name: String) =
          null
       }
 
-/** Return a copy of this string with the outer layer of quotes (if any) removed. **/
+/** Return a copy of this string with the outer layer of quotes removed, or this string if there are none. **/
 val String.unquoted
    get() =
       if (this.isEmpty())
@@ -61,6 +63,19 @@ val PsiElement.clickableString
       is XmlTag            -> value.trimmedText
       else                 -> text.unquoted
    }
+
+val PsiElement.url: String
+   get() {
+      val dest = clickableString
+      return if (dest.isEmpty()) ""
+      else issueNavigationConfig().links.stream()
+                 .map {link-> link.destinationFor(dest)}
+                 .filter {destStr-> destStr.isNotEmpty() && destStr != dest}
+                 .limit(1)  // look no further than the first match
+                 .getIfSingle() ?: ""
+   }
+
+private fun PsiElement.issueNavigationConfig() = IssueNavigationConfiguration.getInstance(project)
 
 /** Return the URL to which this link will navigate. **/
 fun IssueNavigationLink.destinationFor(text: String) = issuePattern.toRegex().replace(text, linkRegexp)

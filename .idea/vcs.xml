@@ -19,6 +19,10 @@
           <option name="issueRegexp" value="wikipedia:([\w()!@#$%^*_+-=`~]+)" />
           <option name="linkRegexp" value="http://en.wikipedia.org/w/index.php?title=Special:Search&amp;search=$1" />
         </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="\S+@\S+\.\S+" />
+          <option name="linkRegexp" value="mailto://$0" />
+        </IssueNavigationLink>
       </list>
     </option>
   </component>
