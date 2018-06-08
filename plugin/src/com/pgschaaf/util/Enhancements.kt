@@ -16,12 +16,12 @@
 
 package com.pgschaaf.util
 
+import com.intellij.openapi.paths.WebReference
 import com.intellij.openapi.vcs.IssueNavigationConfiguration
 import com.intellij.openapi.vcs.IssueNavigationLink
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.containers.getIfSingle
 import java.util.*
 import java.util.stream.Stream
 
@@ -56,26 +56,35 @@ val String.unquoted
       }
 
 /** Return the string portion of this PsiElement that should be treated as a hyperlink **/
-val PsiElement.clickableString
-   get() = when (this) {
-//      is PsiLiteral        -> value as? String ?: ""  // todo pschaaf 05/30/18 10:05: unneeded for Java, Kotlin or XML
-      is XmlAttributeValue -> value ?: ""
-      is XmlTag            -> value.trimmedText
-      else                 -> text.unquoted
-   }
-
-val PsiElement.url: String
+val PsiElement.clickableString: Optional<String>
    get() {
-      val dest = clickableString
-      return if (dest.isEmpty()) ""
-      else issueNavigationConfig().links.stream()
-                 .map {link-> link.destinationFor(dest)}
-                 .filter {destStr-> destStr.isNotEmpty() && destStr != dest}
-                 .limit(1)  // look no further than the first match
-                 .getIfSingle() ?: ""
+      val str = when (this) {
+//      is PsiLiteral        -> value as? String ?: ""  // todo pschaaf 05/30/18 10:05: unneeded for Java, Kotlin or XML
+         is XmlAttributeValue -> value ?: ""
+         is XmlTag            -> value.trimmedText
+         else                 -> text.unquoted
+      }
+      return if (str.isEmpty()) Optional.empty()
+      else Optional.of(str)
    }
 
-private fun PsiElement.issueNavigationConfig() = IssueNavigationConfiguration.getInstance(project)
+val PsiElement.url: Optional<String>
+   get() = clickableString
+         .flatMap {
+            issueNavigationConfigLinks.stream()
+                  .map {link-> link.destinationFor(it)}
+                  .filter {destStr-> destStr.isNotEmpty() && destStr != it}
+                  .findFirst()
+         }
+
+private val PsiElement.issueNavigationConfigLinks
+   get() = issueNavigationConfig.links
+
+val PsiElement.webReference
+   get() = url.map {WebReference(this, it)}
+
+val PsiElement.issueNavigationConfig
+   get() = IssueNavigationConfiguration.getInstance(project)
 
 /** Return the URL to which this link will navigate. **/
 fun IssueNavigationLink.destinationFor(text: String) = issuePattern.toRegex().replace(text, linkRegexp)
