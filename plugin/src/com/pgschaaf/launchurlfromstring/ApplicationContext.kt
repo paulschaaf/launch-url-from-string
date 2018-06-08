@@ -29,19 +29,23 @@ import java.util.stream.Collectors
 object ApplicationContext {
    const val PropertiesFileName = "StringLiteralClassNames"
 
-   private val pluginClassLoaders = PluginManager.getPlugins()
-         .associate {it.pluginId.idString to it.pluginClassLoader}
+   private val psiStringMappings = ResourceBundle.getBundle(PropertiesFileName)
 
    private val defaultClassLoader = RegexPsiReferenceContributor::class.java.classLoader
 
+   private val pluginClassLoaders = PluginManager.getPlugins()
+         .associate {it.pluginId.idString to it.pluginClassLoader}
+         .withDefault {defaultClassLoader}
+
    /** The Psi Element classes for which we will handle navigation **/
    val psiElementPatterns: List<ElementPattern<PsiElement>> =
-         ResourceBundle.getBundle(PropertiesFileName)
+         psiStringMappings
                .keysAndValues()
                .map {(className, pluginId)->
-                  className to pluginClassLoaders.getOrDefault(pluginId, defaultClassLoader)
+                  pluginClassLoaders
+                        .getValue(pluginId)
+                        .tryToLoad<PsiElement>(className)
                }
-               .map {(className, loader)-> loader.tryToLoad<PsiElement>(className)}
                .withoutNulls()
                .map(StandardPatterns::instanceOf)
                .collect(Collectors.toList())

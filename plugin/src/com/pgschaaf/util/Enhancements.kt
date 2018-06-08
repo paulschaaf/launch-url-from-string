@@ -16,12 +16,8 @@
 
 package com.pgschaaf.util
 
-import com.intellij.openapi.paths.WebReference
-import com.intellij.openapi.vcs.IssueNavigationConfiguration
 import com.intellij.openapi.vcs.IssueNavigationLink
-import com.intellij.psi.PsiElement
-import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.psi.xml.XmlTag
+import org.jetbrains.rpc.LOG
 import java.util.*
 import java.util.stream.Stream
 
@@ -31,7 +27,7 @@ private const val testPlugin = "wikipedia:Kotlin_(programming_language)"
 @Suppress("UNCHECKED_CAST")
 fun <T> Stream<T?>.withoutNulls() = filter {it != null} as Stream<T>
 
-/** Return the a Stream of the key-value pairs **/
+/** Return a Stream of the key-value pairs **/
 fun ResourceBundle.keysAndValues(): Stream<Pair<String, String>> =
       this.keySet().stream().map {it to getString(it)}
 
@@ -41,6 +37,7 @@ fun <T> ClassLoader.tryToLoad(name: String) =
          Class.forName(name, true, this) as Class<T>
       }
       catch (e: ClassNotFoundException) {
+         LOG.info("$this could not load class: '$name'")
          null
       }
 
@@ -54,37 +51,6 @@ val String.unquoted
          '\'' -> removeSurrounding("'")
          else -> this
       }
-
-/** Return the string portion of this PsiElement that should be treated as a hyperlink **/
-val PsiElement.clickableString: Optional<String>
-   get() {
-      val str = when (this) {
-//      is PsiLiteral        -> value as? String ?: ""  // todo pschaaf 05/30/18 10:05: unneeded for Java, Kotlin or XML
-         is XmlAttributeValue -> value ?: ""
-         is XmlTag            -> value.trimmedText
-         else                 -> text.unquoted
-      }
-      return if (str.isEmpty()) Optional.empty()
-      else Optional.of(str)
-   }
-
-val PsiElement.url: Optional<String>
-   get() = clickableString
-         .flatMap {
-            issueNavigationConfigLinks.stream()
-                  .map {link-> link.destinationFor(it)}
-                  .filter {destStr-> destStr.isNotEmpty() && destStr != it}
-                  .findFirst()
-         }
-
-private val PsiElement.issueNavigationConfigLinks
-   get() = issueNavigationConfig.links
-
-val PsiElement.webReference
-   get() = url.map {WebReference(this, it)}
-
-val PsiElement.issueNavigationConfig
-   get() = IssueNavigationConfiguration.getInstance(project)
 
 /** Return the URL to which this link will navigate. **/
 fun IssueNavigationLink.destinationFor(text: String) = issuePattern.toRegex().replace(text, linkRegexp)

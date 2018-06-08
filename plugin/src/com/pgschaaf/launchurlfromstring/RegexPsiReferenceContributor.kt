@@ -29,6 +29,6 @@ object RegexPsiReferenceContributor: PsiReferenceContributor() {
       override fun getReferencesByElement(element: PsiElement, context: ProcessingContext) =
             element.webReference
                .map {arrayOf(it)}
-               .orElseGet {arrayOfNulls(0)}
+               .orElseGet {arrayOfNulls(0)}!!
    }
 }

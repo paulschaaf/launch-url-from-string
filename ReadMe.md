@@ -12,11 +12,13 @@ Out of the box IntelliJ lets you define Regular Expressions to turn plain-text e
 has turned the branch name ("DEVCCPERF-142") into a link to that case in a Jira installation.
 
 ## This Plugin
-This plugin applies those same rules to quoted literal strings, XML attributes and XML element text. Now annotations like this
-`@TestCase("DEVCCPERF-142")` become hyperlinks, too. Of course you can define link patterns to go anywhere you like: for instance you could link `[Ww]ikipedia:(.*)` to `http://en.wikipedia.org/w/index.php?title=Special:Search&search=$1`
+This plugin applies those same rules to quoted literal strings, XML attributes and XML element text. Now code like 
+`@TestCase("DEVCCPERF-142")` or `<foo>DEVCCPERF-142</foo>` becomes hyperlinks, too.
+
+Of course you can define link patterns to go anywhere you like: for instance you could link `[Ww]ikipedia:(.*)` to `http://en.wikipedia.org/w/index.php?title=Special:Search&search=$1`
 
 ### Limitations
-The Regex patterns are matched against single literal String values. This means things like `"DEVCCPERF" + "-142" won't match.
+The Regex patterns are matched against each discrete literal String. This means expressions like `"DEVCCPERF" + "-142"` can't be matched by a single pattern.
 
 ### Supported Languages*
 - [Dart](https://www.dartlang.org/)
@@ -29,11 +31,11 @@ The Regex patterns are matched against single literal String values. This means 
 - [Python](https://www.python.org/)
 - [XML](https://www.w3.org/XML/) (attributes and element text)
 
-<sup>* The Strings are found by navigating the PSI parse tree. This means that this feature will only work with languages whose Strings are represented by `com.intellij.psi.PsiLiteral` (like Java and Scala), or whose String PSI literal class is explicitly handled in this plugin. </sup>
+<sup>* The Strings are found by navigating the PSI parse tree. This means that this feature will only work with languages whose Strings are represented by `com.intellij.psi.PsiLiteral` (like Java and Scala), or whose Plugin's String literal PSI class is explicitly listed in StringLiteralClassNames.properties.</sup>
 
  
 # Installation Instructions
- Install it like a normal plugin, then restart. Define a few Regex mappings under File/Settings/Version Control/Issue Navigation. Now you should be able to CTRL-click on matching Strings.
+Install it like a normal plugin, then restart. Define a few Regex mappings under File/Settings/Version Control/Issue Navigation. Now you should be able to CTRL-click on matching Strings.
  
 # Acknowledgements
 Special thanks to Max Ishchenko, whose plugin [idea-navigate-url-from-literal](https://github.com/ishchenko/idea-navigate-from-literal) inspired and guided this one.
@@ -41,5 +43,5 @@ Special thanks to Max Ishchenko, whose plugin [idea-navigate-url-from-literal](h
 Thanks too to JetBrains for releasing [the source](https://github.com/JetBrains/intellij-community) to the wonderful [IntelliJ Community Edition](https://www.jetbrains.com/idea/features/), and for [Kotlin](https://kotlinlang.org/)&mdash;my new favorite programming language.
 
 # Source Code
- This plugin is written in Kotlin. The source is available on [GitHub](https://github.com/paulschaaf/launch-url-from-string) under the Apache License.
+This plugin is written in Kotlin. The source is available on [GitHub](https://github.com/paulschaaf/launch-url-from-string) under the Apache License.
  
