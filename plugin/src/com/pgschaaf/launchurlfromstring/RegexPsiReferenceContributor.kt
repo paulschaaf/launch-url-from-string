@@ -16,19 +16,63 @@
 
 package com.pgschaaf.launchurlfromstring
 
+import com.intellij.ide.plugins.PluginManager
+import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.*
 import com.intellij.util.ProcessingContext
 import com.pgschaaf.util.webReference
+import org.jetbrains.rpc.LOG
+import java.util.*
+import java.util.stream.Collectors
+import java.util.stream.Stream
+
+// Click on the String value to test the plugin -- compiler should optimize this away
+private inline val testPlugin
+   get() = "wikipedia:Kotlin_(programming_language)"
 
 object RegexPsiReferenceContributor: PsiReferenceContributor() {
-   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) = ApplicationContext.psiElementPatterns.forEach {
-      registrar.registerReferenceProvider(it, RegexPsiReferenceProvider)
-   }
+   const val ClassMapPropertiesFileName = "StringLiteralClassNames"
 
-   object RegexPsiReferenceProvider: PsiReferenceProvider() {
-      override fun getReferencesByElement(element: PsiElement, context: ProcessingContext) =
-            element.webReference
+   private val classLoaders =
+         PluginManager.getPlugins()
+               .associate {it.pluginId.idString to it.pluginClassLoader}
+               .withDefault {javaClass.classLoader}
+
+   private val referenceProviders =
+         ResourceBundle
+               .getBundle(ClassMapPropertiesFileName)
+               .keysAndValues()
+               .map {(className, pluginId)-> classLoaders.getValue(pluginId) to className}
+               .map {(loader, className)-> loader.tryToLoad<PsiElement>(className)}
+               .filter {it.isPresent}
+               .map {StandardPatterns.instanceOf(it.get())}
+               .collect(Collectors.toList())
+
+   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) =
+         referenceProviders.forEach {
+            registrar.registerReferenceProvider(it, RegexPsiReferenceProvider)
+         }
+}
+
+object RegexPsiReferenceProvider: PsiReferenceProvider() {
+   override fun getReferencesByElement(element: PsiElement, context: ProcessingContext) =
+         element.webReference
                .map {arrayOf(it)}
                .orElseGet {arrayOfNulls(0)}!!
-   }
 }
+
+/* ----------------- ENHANCEMENTS ----------------- */
+fun <T> ClassLoader.tryToLoad(name: String) = Optional.ofNullable(
+      try {
+         @Suppress("UNCHECKED_CAST")
+         Class.forName(name, true, this) as Class<T>
+      }
+      catch (e: ClassNotFoundException) {
+         LOG.info("$this could not load class: '$name'")
+         null
+      }
+)
+
+fun ResourceBundle.keysAndValues() = this.keySet()
+      .stream()
+      .map {it to getString(it)}!!

@@ -18,6 +18,7 @@ package com.pgschaaf.util
 
 import com.intellij.openapi.paths.WebReference
 import com.intellij.openapi.vcs.IssueNavigationConfiguration
+import com.intellij.openapi.vcs.IssueNavigationLink
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
@@ -26,26 +27,33 @@ import java.util.*
 /** Return the string portion of this PsiElement that should be treated as a hyperlink **/
 val PsiElement.clickableString: Optional<String>
    get() {
-      val str = when (this) {
-         is XmlAttributeValue -> value ?: ""
-         is XmlTag            -> value.trimmedText
-         else                 -> text.unquoted
+      val str = when {
+         this is XmlAttributeValue -> value
+         this is XmlTag            -> value.trimmedText
+         text.first() == '"'       -> text.removeSurrounding("\"")
+         text.first() == '\''      -> text.removeSurrounding("'")
+         else                      -> text
       }
-      return if (str.isEmpty()) Optional.empty()
-      else Optional.of(str)
+      return if (str.isNullOrBlank()) Optional.empty()
+      else Optional.of(str!!)
    }
 
 private val PsiElement.issueNavigationConfig
    get() = IssueNavigationConfiguration.getInstance(project)!!
 
 val PsiElement.url
-   get() = clickableString
-         .flatMap {
-            issueNavigationConfig.links.stream()
-                  .map {link-> link.destinationFor(it)}
-                  .filter {destStr-> destStr.isNotEmpty() && destStr != it}
-                  .findFirst()
-         }!!
+   get() = clickableString.flatMap {
+      issueNavigationConfig.links
+            .stream()
+            .map {link-> link.destinationFor(it)}
+            .filter {destStr-> destStr.isNotBlank() && destStr != it}
+            .findFirst()
+   }!!
 
 val PsiElement.webReference
    get() = url.map {WebReference(this, it)}!!
+
+/** Return the URL to which this link will navigate. **/
+fun IssueNavigationLink.destinationFor(text: String) =
+      issuePattern.toRegex()
+            .replace(text, linkRegexp)

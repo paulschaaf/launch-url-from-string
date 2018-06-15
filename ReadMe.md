@@ -2,7 +2,7 @@
 **IntelliJ Plugin**
 
 ## Summary
-Enables hyperlink navigation from any matching string literal, XML attribute value, or XML element text to a URL defined by the "Issue Navigation" rules in the VCS settings.
+Enables hyperlink navigation from any matching string literal, comment, XML attribute value, or XML element text to a URL defined by the "Issue Navigation" rules in the VCS settings.
 
 ## Background
 Out of the box IntelliJ lets you define Regular Expressions to turn plain-text entries in your check-in comments and branch names into hyperlinks. The most common use case is to link issues back to your issue tracker. For instance the pattern and mapping shown here 
@@ -12,13 +12,10 @@ Out of the box IntelliJ lets you define Regular Expressions to turn plain-text e
 has turned the branch name ("DEVCCPERF-142") into a link to that case in a Jira installation.
 
 ## This Plugin
-This plugin applies those same rules to quoted literal strings, XML attributes and XML element text. Now code like 
+This plugin applies those same rules to literal strings, comments, XML attributes and XML element text. Now code like 
 `@TestCase("DEVCCPERF-142")` or `<foo>DEVCCPERF-142</foo>` becomes hyperlinks, too.
 
 Of course you can define link patterns to go anywhere you like: for instance you could link `[Ww]ikipedia:(.*)` to `http://en.wikipedia.org/w/index.php?title=Special:Search&search=$1`
-
-### Limitations
-The Regex patterns are matched against each discrete literal String. This means expressions like `"DEVCCPERF" + "-142"` can't be matched by a single pattern.
 
 ### Supported Languages*
 - [Dart](https://www.dartlang.org/)
@@ -31,7 +28,10 @@ The Regex patterns are matched against each discrete literal String. This means 
 - [Python](https://www.python.org/)
 - [XML](https://www.w3.org/XML/) (attributes and element text)
 
-<sup>* The Strings are found by navigating the PSI parse tree. This means that this feature will only work with languages whose Strings are represented by `com.intellij.psi.PsiLiteral` (like Java and Scala), or whose Plugin's String literal PSI class is explicitly listed in StringLiteralClassNames.properties.</sup>
+### Limitations
+Because the Regex's are matched against individual elements in the PSI parse tree, expressions like `"DEVCCPERF" + "-142"` can't be matched by a single pattern.
+
+Also, it will only work with languages whose Strings are explicitly listed in the file `StringLiteralClassNames.properties`.
 
  
 # Installation Instructions
