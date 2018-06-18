@@ -24,7 +24,6 @@ import com.pgschaaf.util.webReference
 import org.jetbrains.rpc.LOG
 import java.util.*
 import java.util.stream.Collectors
-import java.util.stream.Stream
 
 // Click on the String value to test the plugin -- compiler should optimize this away
 private inline val testPlugin
@@ -73,6 +72,4 @@ fun <T> ClassLoader.tryToLoad(name: String) = Optional.ofNullable(
       }
 )
 
-fun ResourceBundle.keysAndValues() = this.keySet()
-      .stream()
-      .map {it to getString(it)}!!
+fun ResourceBundle.keysAndValues() = keySet().stream().map {it to getString(it)}!!

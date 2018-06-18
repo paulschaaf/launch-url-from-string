@@ -38,22 +38,23 @@ val PsiElement.clickableString: Optional<String>
       else Optional.of(str!!)
    }
 
-private val PsiElement.issueNavigationConfig
-   get() = IssueNavigationConfiguration.getInstance(project)!!
-
 val PsiElement.url
-   get() = clickableString.flatMap {
-      issueNavigationConfig.links
-            .stream()
-            .map {link-> link.destinationFor(it)}
-            .filter {destStr-> destStr.isNotBlank() && destStr != it}
-            .findFirst()
-   }!!
+   get() = clickableString
+         .flatMap {
+            IssueNavigationConfiguration
+                  .getInstance(project)!!
+                  .links
+                  .stream()
+                  .map {link-> link.destinationFor(it)}
+                  .filter {destStr-> destStr.isNotBlank() && destStr != it}
+                  .findFirst()
+         }!!
 
 val PsiElement.webReference
    get() = url.map {WebReference(this, it)}!!
 
 /** Return the URL to which this link will navigate. **/
 fun IssueNavigationLink.destinationFor(text: String) =
-      issuePattern.toRegex()
+      issuePattern
+            .toRegex()
             .replace(text, linkRegexp)
