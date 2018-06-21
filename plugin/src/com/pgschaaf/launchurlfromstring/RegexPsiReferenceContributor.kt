@@ -17,10 +17,10 @@
 package com.pgschaaf.launchurlfromstring
 
 import com.intellij.ide.plugins.PluginManager
+import com.intellij.openapi.paths.WebReference
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.*
 import com.intellij.util.ProcessingContext
-import com.pgschaaf.util.webReference
 import org.jetbrains.rpc.LOG
 import java.util.*
 import java.util.stream.Collectors
@@ -33,7 +33,8 @@ object RegexPsiReferenceContributor: PsiReferenceContributor() {
    const val ClassMapPropertiesFileName = "StringLiteralClassNames"
 
    private val classLoaders =
-         PluginManager.getPlugins()
+         PluginManager
+               .getPlugins()
                .associate {it.pluginId.idString to it.pluginClassLoader}
                .withDefault {javaClass.classLoader}
 
@@ -55,7 +56,9 @@ object RegexPsiReferenceContributor: PsiReferenceContributor() {
 
 object RegexPsiReferenceProvider: PsiReferenceProvider() {
    override fun getReferencesByElement(element: PsiElement, context: ProcessingContext) =
-         element.webReference
+         element
+               .url
+               .map {WebReference(element, it)}!!
                .map {arrayOf(it)}
                .orElseGet {arrayOfNulls(0)}!!
 }

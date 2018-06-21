@@ -40,7 +40,7 @@ Install it like a normal plugin, then restart. Define a few Regex mappings under
 # Acknowledgements
 Special thanks to Max Ishchenko, whose plugin [idea-navigate-url-from-literal](https://github.com/ishchenko/idea-navigate-from-literal) inspired and guided this one.
 
-Thanks too to JetBrains for releasing [the source](https://github.com/JetBrains/intellij-community) to the wonderful [IntelliJ Community Edition](https://www.jetbrains.com/idea/features/), and for [Kotlin](https://kotlinlang.org/)&mdash;my new favorite programming language.
+Thanks too to JetBrains for releasing [the source](https://github.com/JetBrains/intellij-community) to the wonderful [IntelliJ Community Edition](https://www.jetbrains.com/idea/features/), and for creating [Kotlin](https://kotlinlang.org/)&mdash;my new favorite programming language.
 
 # Source Code
 This plugin is written in Kotlin. The source is available on [GitHub](https://github.com/paulschaaf/launch-url-from-string) under the Apache License.

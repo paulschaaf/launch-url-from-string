@@ -14,9 +14,8 @@
  *  limitations under the License.
  */
 
-package com.pgschaaf.util
+package com.pgschaaf.launchurlfromstring
 
-import com.intellij.openapi.paths.WebReference
 import com.intellij.openapi.vcs.IssueNavigationConfiguration
 import com.intellij.openapi.vcs.IssueNavigationLink
 import com.intellij.psi.PsiElement
@@ -34,8 +33,8 @@ val PsiElement.clickableString: Optional<String>
          text.first() == '\''      -> text.removeSurrounding("'")
          else                      -> text
       }
-      return if (str.isNullOrBlank()) Optional.empty()
-      else Optional.of(str!!)
+      return if (str == null || str.isBlank()) Optional.empty()
+      else Optional.of(str)
    }
 
 val PsiElement.url
@@ -49,9 +48,6 @@ val PsiElement.url
                   .filter {destStr-> destStr.isNotBlank() && destStr != it}
                   .findFirst()
          }!!
-
-val PsiElement.webReference
-   get() = url.map {WebReference(this, it)}!!
 
 /** Return the URL to which this link will navigate. **/
 fun IssueNavigationLink.destinationFor(text: String) =
