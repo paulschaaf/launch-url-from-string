@@ -41,6 +41,9 @@ Of course you can define link patterns to go anywhere you like. See <a href="htt
     <li><a href="https://www.w3.org/XML/">XML</a> (applied to attributes and element text)
 </ul><p/>
 
+<h2>Installation Instructions</h2>
+Install it like a normal plugin, then restart. Define a few Regex mappings under File/Settings/Version Control/Issue Navigation. Now you should be able to CTRL-click on matching Strings.
+<p/>
 <h2>Acknowledgements</h2>
 Special thanks to Max Ishchenko, whose plugin <a href="https://github.com/ishchenko/idea-navigate-from-literal">idea-navigate-url-from-literal</a> inspired and guided this one.<p/>
 Thanks too to JetBrains for releasing <a href="https://github.com/JetBrains/intellij-community">the source</a> to the wonderful <a href="https://www.jetbrains.com/idea/features/">IntelliJ Community Edition</a>, and for creating <a href="https://kotlinlang.org/">Kotlin</a>&mdash;my new favorite programming language.<p/>

@@ -42,8 +42,10 @@ object RegexPsiReferenceContributor: PsiReferenceContributor() {
          ResourceBundle
                .getBundle(ClassMapPropertiesFileName)
                .keysAndValues()
-               .map {(className, pluginId)-> classLoaders.getValue(pluginId) to className}
-               .map {(loader, className)-> loader.tryToLoad<PsiElement>(className)}
+               .map {(className, pluginId)->
+                  classLoaders
+                     .getValue(pluginId)
+                     .tryToLoad<PsiElement>(className)}
                .filter {it.isPresent}
                .map {StandardPatterns.instanceOf(it.get())}
                .collect(Collectors.toList())
