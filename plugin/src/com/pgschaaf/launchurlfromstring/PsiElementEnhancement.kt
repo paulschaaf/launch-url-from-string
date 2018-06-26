@@ -29,6 +29,8 @@ val PsiElement.clickableString: Optional<String>
       val str = when {
          this is XmlAttributeValue -> value
          this is XmlTag            -> value.trimmedText
+         text == null              -> null
+         text.isEmpty()            -> null
          text.first() == '"'       -> text.removeSurrounding("\"")
          text.first() == '\''      -> text.removeSurrounding("'")
          else                      -> text
