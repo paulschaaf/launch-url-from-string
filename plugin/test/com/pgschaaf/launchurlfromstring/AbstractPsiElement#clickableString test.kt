@@ -37,8 +37,11 @@ abstract class `AbstractPsiElement#clickableString test` {
    @Test fun `leading double quote is preserved`() =
          "\"hello" yields "\"hello"
 
+   @Test fun `trailing single quote is preserved`() =
+         "hello'" yields "hello'"
+
    @Test fun `empty String is ignored`() =
-         "" yields null
+         ""  yields null
 
    @Test fun `null String is ignored`() =
          null yields null
