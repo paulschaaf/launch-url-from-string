@@ -14,14 +14,15 @@
  *  limitations under the License.
  */
 
-package com.pgschaaf.launchurlfromstring
+package com.pgschaaf.launchurlfromstring.clickableStringEnhancement
 
 import com.intellij.psi.PsiElement
+import com.pgschaaf.launchurlfromstring.clickableString
 import org.fest.assertions.Assertions
 import org.junit.Test
 import java.util.*
 
-abstract class `AbstractPsiElement#clickableString test` {
+abstract class AbstractPsiElement {
    abstract protected fun elementContaining(string: String?): PsiElement
 
    infix fun String?.yields(actual: String?) {

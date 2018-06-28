@@ -14,12 +14,12 @@
  *  limitations under the License.
  */
 
-package com.pgschaaf.launchurlfromstring
+package com.pgschaaf.launchurlfromstring.clickableStringEnhancement
 
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
 import org.junit.Test
 
-class `XmlAttributeValue#clickableString test`: `AbstractPsiElement#clickableString test`() {
+class XmlAttributeValue: AbstractPsiElement() {
    @Test override fun runInheritedTests() {}
 
    override fun elementContaining(string: String?) = object: XmlAttributeValueImpl() {

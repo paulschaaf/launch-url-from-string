@@ -17,7 +17,7 @@
 <idea-plugin>
     <id>launch-url-from-string</id>
     <name>Launch URL from String</name>
-    <version>1.0</version>
+    <version>1.1</version>
     <vendor email="paul.schaaf+intellij@gmail.com" url="https://github.com/paulschaaf/launch-url-from-string">
         Paul Schaaf
     </vendor>
@@ -53,7 +53,7 @@ This plugin is written in Kotlin. The source is available on <a href="https://gi
     ]]></description>
 
     <change-notes><![CDATA[<ul>
-      <li>1.0 Initial release
+      <li>06/18: 1.0 Initial release
     </ul>]]></change-notes>
 
     <idea-version since-build="143.2370"/>

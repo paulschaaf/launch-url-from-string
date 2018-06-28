@@ -14,13 +14,13 @@
  *  limitations under the License.
  */
 
-package com.pgschaaf.launchurlfromstring
+package com.pgschaaf.launchurlfromstring.clickableStringEnhancement
 
 import com.intellij.psi.impl.source.xml.XmlTagImpl
 import com.intellij.psi.xml.XmlTagValue
 import org.junit.Test
 
-class `XmlTag#clickableString test`: `AbstractPsiElement#clickableString test`() {
+class XmlTag: AbstractPsiElement() {
    @Test override fun runInheritedTests() {}
 
    override fun elementContaining(string: String?) = object: XmlTagImpl() {

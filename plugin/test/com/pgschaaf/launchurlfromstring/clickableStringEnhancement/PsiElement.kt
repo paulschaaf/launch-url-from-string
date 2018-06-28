@@ -1,4 +1,4 @@
-package com.pgschaaf.launchurlfromstring
+package com.pgschaaf.launchurlfromstring.clickableStringEnhancement
 
 import com.intellij.psi.impl.FakePsiElement
 import org.junit.Test
@@ -18,7 +18,7 @@ import org.junit.Test
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-class `PsiElement#clickableString test`: `AbstractPsiElement#clickableString test`() {
+class PsiElement: AbstractPsiElement() {
    override fun elementContaining(string: String?) = object: FakePsiElement() {
       override fun getText() = string
       override fun getParent() = this
