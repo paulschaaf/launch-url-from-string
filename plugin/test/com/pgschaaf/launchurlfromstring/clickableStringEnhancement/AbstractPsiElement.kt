@@ -23,14 +23,12 @@ import org.junit.Test
 import java.util.*
 
 abstract class AbstractPsiElement {
-   abstract protected fun elementContaining(string: String?): PsiElement
+   abstract protected fun makeElementWithString(string: String?): PsiElement
 
    infix fun String?.yields(actual: String?) {
-      Assertions.assertThat(elementContaining(this).clickableString)
+      Assertions.assertThat(makeElementWithString(this).clickableString)
             .isEqualTo(Optional.ofNullable(actual))
    }
-
-   @Test abstract fun runInheritedTests()
 
    @Test fun `plain string is preserved`() =
          "hello" yields "hello"

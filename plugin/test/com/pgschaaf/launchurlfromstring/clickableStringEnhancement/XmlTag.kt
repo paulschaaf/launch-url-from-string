@@ -21,25 +21,31 @@ import com.intellij.psi.xml.XmlTagValue
 import org.junit.Test
 
 class XmlTag: AbstractPsiElement() {
-   @Test override fun runInheritedTests() {}
+   override fun makeElementWithString(string: String?) = object: XmlTagImpl() {
+      override fun getValue() = FakeXmlTag(string)
+   }
 
-   override fun elementContaining(string: String?) = object: XmlTagImpl() {
-      override fun getValue() = object: XmlTagValue {
-         override fun getTrimmedText() = string ?: ""
+   @Test fun `surrounding double quotes are not stripped`() =
+         "\"hello\"" yields "\"hello\""
 
-         override fun hasCDATA() = false
+   @Test fun `surrounding single quotes are not stripped`() =
+         "'hello'" yields "'hello'"
 
-         override fun getChildren() = throw IllegalAccessError("This method should not have been called!")
+   private class FakeXmlTag(private val str: String?): XmlTagValue {
+      override fun getTrimmedText() = str ?: ""
 
-         override fun getTextRange() = throw IllegalAccessError("This method should not have been called!")
+      override fun hasCDATA() = false
 
-         override fun setEscapedText(p0: String?) = throw IllegalAccessError("This method should not have been called!")
+      override fun getChildren() = throw IllegalAccessError("This method should not have been called!")
 
-         override fun getTextElements() = throw IllegalAccessError("This method should not have been called!")
+      override fun getTextRange() = throw IllegalAccessError("This method should not have been called!")
 
-         override fun setText(p0: String?) = throw IllegalAccessError("This method should not have been called!")
+      override fun setEscapedText(p0: String?) = throw IllegalAccessError("This method should not have been called!")
 
-         override fun getText() = throw IllegalAccessError("This method should not have been called!")
-      }
+      override fun getTextElements() = throw IllegalAccessError("This method should not have been called!")
+
+      override fun setText(p0: String?) = throw IllegalAccessError("This method should not have been called!")
+
+      override fun getText() = throw IllegalAccessError("This method should not have been called!")
    }
 }

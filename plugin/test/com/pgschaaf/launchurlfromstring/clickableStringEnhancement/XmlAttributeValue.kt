@@ -20,10 +20,14 @@ import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
 import org.junit.Test
 
 class XmlAttributeValue: AbstractPsiElement() {
-   @Test override fun runInheritedTests() {}
-
-   override fun elementContaining(string: String?) = object: XmlAttributeValueImpl() {
+   override fun makeElementWithString(string: String?) = object: XmlAttributeValueImpl() {
       override fun getValue() = string
       override fun getText() = throw IllegalAccessError("This test should not have called getText()!")
    }
+
+   @Test fun `surrounding double quotes are not stripped`() =
+         "\"hello\"" yields "\"hello\""
+
+   @Test fun `surrounding single quotes are not stripped`() =
+         "'hello'" yields "'hello'"
 }

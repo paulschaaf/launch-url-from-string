@@ -19,12 +19,10 @@ import org.junit.Test
  *  limitations under the License.
  */
 class PsiElement: AbstractPsiElement() {
-   override fun elementContaining(string: String?) = object: FakePsiElement() {
+   override fun makeElementWithString(string: String?) = object: FakePsiElement() {
       override fun getText() = string
       override fun getParent() = this
    }
-
-   @Test override fun runInheritedTests() {}
 
    @Test fun `surrounding double quotes are stripped`() =
          "\"hello\"" yields "hello"
