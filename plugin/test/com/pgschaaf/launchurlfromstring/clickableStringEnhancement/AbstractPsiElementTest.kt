@@ -22,7 +22,7 @@ import org.fest.assertions.Assertions
 import org.junit.Test
 import java.util.*
 
-abstract class AbstractPsiElement {
+abstract class AbstractPsiElementTest {
    abstract protected fun makeElementWithString(string: String?): PsiElement
 
    infix fun String?.yields(actual: String?) {

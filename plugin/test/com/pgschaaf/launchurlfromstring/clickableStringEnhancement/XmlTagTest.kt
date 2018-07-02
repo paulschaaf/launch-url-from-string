@@ -20,9 +20,10 @@ import com.intellij.psi.impl.source.xml.XmlTagImpl
 import com.intellij.psi.xml.XmlTagValue
 import org.junit.Test
 
-class XmlTag: AbstractPsiElement() {
+class XmlTagTest: AbstractPsiElementTest() {
    override fun makeElementWithString(string: String?) = object: XmlTagImpl() {
-      override fun getValue() = FakeXmlTag(string)
+      override fun getValue() =
+            FakeXmlTag(string)
    }
 
    @Test fun `surrounding double quotes are not stripped`() =

@@ -16,21 +16,18 @@
 
 package com.pgschaaf.launchurlfromstring.clickableStringEnhancement
 
-import com.intellij.psi.impl.FakePsiElement
+import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
 import org.junit.Test
 
-class PsiElement: AbstractPsiElement() {
-   override fun makeElementWithString(string: String?) = object: FakePsiElement() {
-      override fun getText() = string
-      override fun getParent() = this
+class XmlAttributeValueTest: AbstractPsiElementTest() {
+   override fun makeElementWithString(string: String?) = object: XmlAttributeValueImpl() {
+      override fun getValue() = string
+      override fun getText() = throw IllegalAccessError("This test should not have called getText()!")
    }
 
-   @Test fun `surrounding double quotes are stripped`() =
-         "\"hello\"" yields "hello"
+   @Test fun `surrounding double quotes are not stripped`() =
+         "\"hello\"" yields "\"hello\""
 
-   @Test fun `surrounding single quotes are stripped`() =
-         "'hello'" yields "hello"
-
-   @Test fun `empty Quotes are ignored`() =
-         "''" yields null
+   @Test fun `surrounding single quotes are not stripped`() =
+         "'hello'" yields "'hello'"
 }
