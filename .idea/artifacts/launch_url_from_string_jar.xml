@@ -3,6 +3,9 @@
     <output-path>$PROJECT_DIR$/out/artifacts</output-path>
     <root id="archive" name="launch-url-from-string.jar">
       <element id="module-output" name="plugin" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/plugin/META-INF/MANIFEST.MF" />
+      </element>
     </root>
   </artifact>
 </component>

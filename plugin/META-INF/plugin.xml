@@ -1,0 +1,65 @@
+<!--
+  ~ Copyright 2018 P.G. Schaaf <paul.schaaf@gmail.com>
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<idea-plugin>
+    <id>launch-url-from-string</id>
+    <name>Launch URL from String</name>
+    <version>1.1</version>
+    <vendor email="paul.schaaf+intellij@gmail.com" url="https://github.com/paulschaaf/launch-url-from-string">
+        Paul Schaaf
+    </vendor>
+
+    <description><![CDATA[
+Out of the box IntelliJ lets you define Regular Expressions to turn plain-text entries in your check-in comments and branch names into hyperlinks. The most common use case is to link issues back to your issue tracker.<p/>
+
+This plugin applies those same rules to literal strings, comments, XML attributes and XML element text. Now code like <code>@TestCase("DEVCCPERF-142")</code> or <code>&lt;foo&gt;DEVCCPERF-142&lt;/foo&gt;</code> becomes hyperlinks, too.<p/>
+
+Of course you can define link patterns to go anywhere you like. See <a href="https://github.com/paulschaaf/launch-url-from-string">here</a> for more information.<p/>
+
+<h2>Supported Languages</h2><ul>
+    <li><a href="https://www.dartlang.org/">Dart</a>
+    <li><a href="https://gosu-lang.github.io/">Gosu</a>
+    <li><a href="https://www.java.com/en/">Java</a>
+    <li><a href="https://www.javascript.com/">JavaScript</a>
+    <li><a href="https://kotlinlang.org/">Kotlin</a>
+    <li><a href="https://www.scala-lang.org/">Scala</a>
+    <li><a href="http://www.php.net/">Php</a>
+    <li><a href="https://www.python.org/">Python</a>
+    <li><a href="https://www.w3.org/XML/">XML</a> (applied to attributes and element text)
+</ul><p/>
+
+<h2>Installation Instructions</h2>
+Install it like a normal plugin, then restart. Define a few Regex mappings under File/Settings/Version Control/Issue Navigation. Now you should be able to CTRL-click on matching Strings.
+<p/>
+<h2>Acknowledgements</h2>
+Special thanks to Max Ishchenko, whose plugin <a href="https://github.com/ishchenko/idea-navigate-from-literal">idea-navigate-url-from-literal</a> inspired and guided this one.<p/>
+Thanks too to JetBrains for releasing <a href="https://github.com/JetBrains/intellij-community">the source</a> to the wonderful <a href="https://www.jetbrains.com/idea/features/">IntelliJ Community Edition</a>, and for creating <a href="https://kotlinlang.org/">Kotlin</a>&mdash;my new favorite programming language.<p/>
+
+<h2>Source Code</h2>
+This plugin is written in Kotlin. The source is available on <a href="https://github.com/paulschaaf/launch-url-from-string">GitHub</a> under the Apache License.
+    ]]></description>
+
+    <change-notes><![CDATA[<ul>
+      <li>06/18: 1.0 Initial release
+    </ul>]]></change-notes>
+
+    <idea-version since-build="143.2370"/>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <psi.referenceContributor implementation="com.pgschaaf.launchurlfromstring.RegexPsiReferenceContributor"/>
+    </extensions>
+
+</idea-plugin>

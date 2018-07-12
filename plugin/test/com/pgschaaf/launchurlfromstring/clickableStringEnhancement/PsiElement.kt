@@ -1,3 +1,8 @@
+package com.pgschaaf.launchurlfromstring.clickableStringEnhancement
+
+import com.intellij.psi.impl.FakePsiElement
+import org.junit.Test
+
 /*
  * Copyright 2018 P.G. Schaaf <paul.schaaf@gmail.com>
  *
@@ -13,10 +18,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+class PsiElement: AbstractPsiElement() {
+   override fun makeElementWithString(string: String?) = object: FakePsiElement() {
+      override fun getText() = string
+      override fun getParent() = this
+   }
 
-package com.pgschaaf.util
+   @Test fun `surrounding double quotes are stripped`() =
+         "\"hello\"" yields "hello"
 
-import java.util.stream.Stream
+   @Test fun `surrounding single quotes are stripped`() =
+         "'hello'" yields "hello"
 
-@Suppress("UNCHECKED_CAST")
-fun <T> Stream<T?>.withoutNulls() = filter {it != null} as Stream<T>
+   @Test fun `empty Quotes are ignored`() =
+         "''" yields null
+}
