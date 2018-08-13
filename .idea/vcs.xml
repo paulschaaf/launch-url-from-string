@@ -4,24 +4,24 @@
     <option name="links">
       <list>
         <IssueNavigationLink>
-          <option name="issueRegexp" value="(?i)\b(ab|apollo|bc|cc|clm|cm|ctc|devccperf|doc|gl|ide|pc|pl|rd|rn|sam|std|suite|ux)-\d+\b" />
-          <option name="linkRegexp" value="https://jira.guidewire.com/browse/$0" />
+          <option name="issueRegexp" value=".*\b(?i)((ab|apollo|bc|cc|clm|cm|ctc|devccperf|doc|gl|ide|pc|pl|rd|rn|sam|std|suite|ux)-\d+)\b.*" />
+          <option name="linkRegexp" value="https://jira.guidewire.com/browse/$1" />
         </IssueNavigationLink>
         <IssueNavigationLink>
-          <option name="issueRegexp" value="\b(?i)(DE|US)\d+" />
-          <option name="linkRegexp" value="https://rally1.rallydev.com/slm/rally.sp#/search?keywords=$0" />
+          <option name="issueRegexp" value=".*\b(?i)((DE|US)\d+).*" />
+          <option name="linkRegexp" value="https://rally1.rallydev.com/slm/rally.sp#/search?keywords=$1" />
         </IssueNavigationLink>
         <IssueNavigationLink>
-          <option name="issueRegexp" value="\b[Rr]\d+\b" />
-          <option name="linkRegexp" value="http://riki/index.php/Req:$0" />
+          <option name="issueRegexp" value=".*.*\b([Rr]\d+)\b" />
+          <option name="linkRegexp" value="http://riki/index.php/Req:$1" />
         </IssueNavigationLink>
         <IssueNavigationLink>
-          <option name="issueRegexp" value="wikipedia:([\w()!@#$%^*_+-=`~]+)" />
+          <option name="issueRegexp" value=".*\b(wikipedia:([\w()!@#$%^*_+-=`~]+))\b.*" />
           <option name="linkRegexp" value="http://en.wikipedia.org/w/index.php?title=Special:Search&amp;search=$1" />
         </IssueNavigationLink>
         <IssueNavigationLink>
-          <option name="issueRegexp" value="\S+@\S+\.\S+" />
-          <option name="linkRegexp" value="mailto://$0" />
+          <option name="issueRegexp" value=".*\b(\S+@\S+\.\S+)\b.*" />
+          <option name="linkRegexp" value="mailto://$1" />
         </IssueNavigationLink>
       </list>
     </option>
