@@ -36,7 +36,7 @@ object RegexPsiReferenceContributor: PsiReferenceContributor() {
          PluginManager
                .getPlugins()
                .associate {it.pluginId.idString to it.pluginClassLoader}
-               .withDefault {javaClass.classLoader}
+               .withDefault {javaClass.classLoader} // if no pluginID was provided, map to the normal classloader
 
    private val referenceProviders =
          ResourceBundle

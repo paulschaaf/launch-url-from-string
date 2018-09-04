@@ -17,7 +17,7 @@ This plugin applies those same rules to literal strings, comments, XML attribute
 
 Of course you can define link patterns to go anywhere you like: for instance you could link `[Ww]ikipedia:(.*)` to `http://en.wikipedia.org/w/index.php?title=Special:Search&search=$1`
 
-### Supported Languages*
+### Supported Languages
 - [Dart](https://www.dartlang.org/)
 - [Gosu](https://gosu-lang.github.io/)
 - [Java](https://www.java.com/en/)
@@ -31,7 +31,7 @@ Of course you can define link patterns to go anywhere you like: for instance you
 ### Limitations
 Because the Regex's are matched against individual elements in the PSI parse tree, expressions like `"DEVCCPERF" + "-142"` can't be matched by a single pattern.
 
-Also, it will only work with languages whose Strings are explicitly listed in the file `StringLiteralClassNames.properties`.
+Also, it will only work with languages whose Strings Classes are explicitly listed in the file `StringLiteralClassNames.properties`.
 
  
 # Installation Instructions
