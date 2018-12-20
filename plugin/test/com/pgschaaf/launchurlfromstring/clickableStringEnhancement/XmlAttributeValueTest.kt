@@ -19,8 +19,8 @@ package com.pgschaaf.launchurlfromstring.clickableStringEnhancement
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
 import org.junit.Test
 
-class XmlAttributeValue: AbstractPsiElement() {
-   override fun makeElementWithString(string: String?) = object: XmlAttributeValueImpl() {
+class XmlAttributeValueTest: AbstractPsiElementTest() {
+   override fun makeElementWithString(string: String) = object: XmlAttributeValueImpl() {
       override fun getValue() = string
       override fun getText() = throw IllegalAccessError("This test should not have called getText()!")
    }

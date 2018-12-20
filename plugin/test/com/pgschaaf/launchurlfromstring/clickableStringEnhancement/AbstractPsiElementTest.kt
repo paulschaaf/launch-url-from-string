@@ -18,16 +18,23 @@ package com.pgschaaf.launchurlfromstring.clickableStringEnhancement
 
 import com.intellij.psi.PsiElement
 import com.pgschaaf.launchurlfromstring.clickableString
-import org.fest.assertions.Assertions
 import org.junit.Test
-import java.util.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
-abstract class AbstractPsiElement {
-   abstract protected fun makeElementWithString(string: String?): PsiElement
+abstract class AbstractPsiElementTest {
+   protected abstract fun makeElementWithString(string: String): PsiElement
 
    infix fun String?.yields(actual: String?) {
-      Assertions.assertThat(makeElementWithString(this).clickableString)
-            .isEqualTo(Optional.ofNullable(actual))
+       if (actual == null) {
+            assertFalse(makeElementWithString(this ?: "").clickableString.isPresent)
+       }
+       else if (actual.isBlank()) {
+            assertFalse(makeElementWithString(this ?: "").clickableString.isPresent)
+       }
+       else {
+           assertEquals(actual, makeElementWithString(this!!).clickableString.get())
+       }
    }
 
    @Test fun `plain string is preserved`() =

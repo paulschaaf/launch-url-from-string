@@ -20,8 +20,8 @@ import com.intellij.psi.impl.source.xml.XmlTagImpl
 import com.intellij.psi.xml.XmlTagValue
 import org.junit.Test
 
-class XmlTag: AbstractPsiElement() {
-   override fun makeElementWithString(string: String?) = object: XmlTagImpl() {
+class XmlTagTest: AbstractPsiElementTest() {
+   override fun makeElementWithString(string: String) = object: XmlTagImpl() {
       override fun getValue() = FakeXmlTag(string)
    }
 
