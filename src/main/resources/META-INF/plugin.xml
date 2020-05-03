@@ -58,8 +58,15 @@ This plugin is written in Kotlin. The source is available on <a href="https://gi
 
     <idea-version since-build="143.2370"/>
 
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
     <extensions defaultExtensionNs="com.intellij">
         <psi.referenceContributor implementation="com.pgschaaf.launchurlfromstring.RegexPsiReferenceContributor"/>
     </extensions>
 
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
 </idea-plugin>
