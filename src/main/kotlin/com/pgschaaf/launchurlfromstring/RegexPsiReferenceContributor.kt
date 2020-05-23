@@ -45,7 +45,7 @@ object RegexPsiReferenceContributor: PsiReferenceContributor() {
                .map {(className, pluginId)->
                   classLoaders
                      .getValue(pluginId)
-                     .tryToLoad<PsiElement>(className)}
+                     .tryToLoad<PsiElement>(className, pluginId)}
                .filter {it.isPresent}
                .map {StandardPatterns.instanceOf(it.get())}
                .collect(Collectors.toList())
@@ -66,13 +66,14 @@ object RegexPsiReferenceProvider: PsiReferenceProvider() {
 }
 
 /* ----------------- ENHANCEMENTS ----------------- */
-fun <T> ClassLoader.tryToLoad(name: String) = Optional.ofNullable(
+fun <T> ClassLoader.tryToLoad(name: String, id: String) = Optional.ofNullable(
       try {
          @Suppress("UNCHECKED_CAST")
          Class.forName(name, true, this) as Class<T>
       }
       catch (e: ClassNotFoundException) {
-         LOG.info("$this could not load class: '$name'")
+          this.toString()
+         LOG.info("Plugin launch-url-from-string disabled for $id as '$name' was not found")
          null
       }
 )
